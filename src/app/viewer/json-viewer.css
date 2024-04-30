@@ -1,0 +1,7 @@
+#jsonViewer {
+  text-wrap: nowrap;
+}
+
+#jsonViewer .object-key-val {
+  width: fit-content;
+}
