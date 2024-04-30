@@ -1,0 +1,72 @@
+.highlight-div {
+  margin: 0px;
+  border: 0px;
+  background: none;
+  box-sizing: inherit;
+  display: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-variant-ligatures: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  tab-size: inherit;
+  text-indent: inherit;
+  text-rendering: inherit;
+  text-transform: inherit;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  outline: 0px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  resize: none;
+  color: transparent;
+  opacity: 0.8;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-fill-color: transparent;
+  padding: 15px;
+  min-height: 16px;
+}
+
+/* Tree Viewer */
+
+#treeViewer {
+  /* overflow: auto;
+  height: 100%; */
+  padding-top: 2px;
+  padding-bottom: 2px;
+  --node-selected: #1573de;
+}
+
+#treeViewer .nodeText {
+  cursor: pointer;
+  display: inline-block;
+}
+
+#treeViewer .nodeText.selected {
+  color: var(--node-selected);
+  font-weight: 500;
+}
+
+#treeViewer .endNode {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 16px;
+}
+
+.editorRangeHighlight,
+#treeViewer .nodeText.selected,
+#jsonViewer .selected {
+  background-color: rgba(255, 255, 0, 0.25);
+  border: solid 1px yellowgreen;
+}
+
+.namespace-breadcrumb > ol {
+  flex-wrap: nowrap;
+}
