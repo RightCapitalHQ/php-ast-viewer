@@ -36,7 +36,7 @@
 
 /* Tree Viewer */
 
-#treeViewer {
+#tree-viewer {
   /* overflow: auto;
   height: 100%; */
   padding-top: 2px;
@@ -44,29 +44,39 @@
   --node-selected: #1573de;
 }
 
-#treeViewer .nodeText {
+#tree-viewer .node-text {
   cursor: pointer;
   display: inline-block;
 }
 
-#treeViewer .nodeText.selected {
+#tree-viewer .node-text.selected {
   color: var(--node-selected);
   font-weight: 500;
 }
 
-#treeViewer .endNode {
+#tree-viewer .end-node {
   padding-top: 2px;
   padding-bottom: 2px;
   padding-left: 16px;
 }
 
-.editorRangeHighlight,
-#treeViewer .nodeText.selected,
-#jsonViewer .selected {
+.editor-range-highlight,
+#tree-viewer .node-text.selected,
+#json-viewer .selected {
   background-color: rgba(255, 255, 0, 0.25);
   border: solid 1px yellowgreen;
 }
 
 .namespace-breadcrumb > ol {
   flex-wrap: nowrap;
+}
+
+.ant-dropdown-menu-sub {
+  max-height: 50vh;
+  overflow-y: auto;
+  box-shadow:
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
 }

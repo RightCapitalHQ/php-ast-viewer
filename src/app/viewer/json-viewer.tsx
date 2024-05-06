@@ -1,9 +1,8 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node.js';
+import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
 import _ from 'lodash';
 import ReactJson, { CollapsedFieldProps, OnSelectProps } from '@yilun-sun/react-json-view';
 import './json-viewer.css';
-import { theme } from 'antd';
 
 interface JsonViewerProps {
   jsonData: { data: INode[] };
@@ -16,22 +15,19 @@ interface JsonViewerProps {
   isDarkMode: boolean;
 }
 
-const { useToken } = theme;
-
 export default function JsonViewer(props: JsonViewerProps) {
   const { onSelect, enableClipboard, jsonData, alwaysCollapseFieldNames, currentNamespace, expandDepth, isDarkMode } =
     props;
 
   const [currentHighlightNode, setCurrentHighlightNode] = useState<HTMLElement | null>(null);
 
-  const { token } = useToken();
-
   useLayoutEffect(() => {
     currentHighlightNode?.classList.remove('selected');
-    const treeViewer = document.getElementById('jsonViewer');
+    const jsonViewer = document.getElementById('json-viewer');
+
     const selectedNode = document.getElementById(currentNamespace.join('-'));
 
-    if (treeViewer && selectedNode) {
+    if (jsonViewer && selectedNode) {
       setCurrentHighlightNode(selectedNode);
       selectedNode?.classList.add('selected');
 
@@ -41,7 +37,7 @@ export default function JsonViewer(props: JsonViewerProps) {
   }, [currentNamespace]);
 
   return (
-    <div id='jsonViewer'>
+    <div id={'json-viewer'} className={'object-key-val'}>
       <ReactJson
         onSelect={onSelect}
         quotesOnKeys={false}

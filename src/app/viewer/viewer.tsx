@@ -2,7 +2,6 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import './viewer.css';
 import {
-  Breadcrumb,
   Button,
   Checkbox,
   ConfigProvider,
@@ -177,7 +176,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     deltaDecorationsRef.current = editorRef.current.createDecorationsCollection([
       {
         range,
-        options: { className: 'editorRangeHighlight' },
+        options: { className: 'editor-range-highlight' },
       },
     ]);
 
@@ -269,27 +268,6 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                       const node = searchNodeWithMatchedPosition(jsonDataRef.current.data, position);
 
                       setSelectedNode(node);
-
-                      // const position = {
-                      //   position: editorModel.getOffsetAt(e.position),
-                      //   lineNumber: e.position.lineNumber,
-                      //   column: e.position.column,
-                      // };
-
-                      // const node = searchNodeWithMatchedPosition(jsonDataRef.current.data, position);
-
-                      // const lineStartPos = editorModel.getOffsetAt(e.position) - e.position.column;
-
-                      // if (node) {
-                      //   const range = {
-                      //     startLineNumber: position.lineNumber,
-                      //     startColumn: node.attributes.startFilePos - lineStartPos,
-                      //     endLineNumber: position.lineNumber,
-                      //     endColumn: node.attributes.endFilePos - lineStartPos + 1,
-                      //   };
-
-                      //   updateRangeAndSelectedNode(range, node);
-                      // }
                     });
                   }}
                 />

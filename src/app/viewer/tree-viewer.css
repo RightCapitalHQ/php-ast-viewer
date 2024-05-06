@@ -4,9 +4,9 @@
   font-size: 16px;
 }
 
-.tree-view_item {
-  /* immediate child of .tree-view, for styling convenience */
-}
+/* immediate child of .tree-view, for styling convenience */
+/* .tree-view_item {
+} */
 
 /* style for the children nodes container */
 .tree-view_children {

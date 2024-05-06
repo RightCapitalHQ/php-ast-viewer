@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import TreeView from 'react-treeview';
-import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node.js';
+import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
 import _ from 'lodash';
 import './tree-viewer.css';
 import { Typography } from 'antd';
@@ -30,8 +30,8 @@ export default function TreeViewer(props: TreeViewerProps) {
   let i = 0;
 
   useLayoutEffect(() => {
-    const treeViewer = document.getElementById('treeViewer');
-    const selectedNode = document.querySelector(`#treeViewer .selected`);
+    const treeViewer = document.getElementById('tree-viewer');
+    const selectedNode = document.querySelector(`#tree-viewer .selected`);
     if (treeViewer && selectedNode) {
       selectedNode.scrollIntoView({ block: 'center', inline: 'center' });
     }
@@ -41,11 +41,11 @@ export default function TreeViewer(props: TreeViewerProps) {
     return <></>;
   }
 
-  return <div id='treeViewer'>{renderNode(sourceFile, forEachChild)}</div>;
+  return <div id='tree-viewer'>{renderNode(sourceFile, forEachChild)}</div>;
 
   function renderNode(node: INode, getChildren: (node: INode) => INode[]): JSX.Element {
     const children = getChildren(node);
-    const className = 'nodeText' + (node === selectedNode ? ' selected' : '');
+    const className = 'node-text' + (node === selectedNode ? ' selected' : '');
     const nodeTypeName = node.nodeType;
     const label = (
       <div onClick={() => onSelectNode(node)} className={className}>
@@ -55,7 +55,7 @@ export default function TreeViewer(props: TreeViewerProps) {
 
     if (children.length === 0) {
       return (
-        <div key={i++} className='endNode' data-name={nodeTypeName}>
+        <div key={i++} className='end-node' data-name={nodeTypeName}>
           {label}
         </div>
       );

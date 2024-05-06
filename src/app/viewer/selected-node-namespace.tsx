@@ -39,7 +39,7 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
           const subItems = getBreadCrumbItemsRecursivelyWithDepth(v, depth - 1);
 
           const item = {
-            key: `${v.attributes.startTokenPos}-${v.nodeType}`,
+            key: `${v.attributes.startTokenPos}-${i}-${v.nodeType}`,
             label: (
               <Button
                 type='link'
@@ -66,7 +66,7 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
           const subItems = getBreadCrumbItemsRecursivelyWithDepth(v, depth - 1);
 
           const item = {
-            key: `${v.attributes.startTokenPos}-${v.nodeType}`,
+            key: `${v.attributes.startTokenPos}-${k}-${v.nodeType}`,
             label: (
               <Button
                 type='link'
@@ -90,7 +90,7 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
 
           if (subItems.length > 0) {
             const item = {
-              key: `${node.nodeType}-${keyName}`,
+              key: `${depth}-${k}-${node.nodeType}-${keyName}`,
               label: <Typography.Text className='p-[4px]'>{k}</Typography.Text>,
             };
 
