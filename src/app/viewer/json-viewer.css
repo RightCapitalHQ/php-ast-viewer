@@ -7,13 +7,12 @@
 }
 
 #json-viewer .clickable {
-  border: solid 2px #5070e655;
-  background-color: #5070e611;
+  background-color: #919ece33;
   border-radius: 4px;
   padding: 2px;
   cursor: pointer;
 }
 
 #json-viewer .clickable:hover {
-  background-color: #5070e633;
+  background-color: #919ece66;
 }
