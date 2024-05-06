@@ -80,3 +80,8 @@
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
 }
+
+.ant-dropdown-menu-submenu-title {
+  display: flex;
+  align-items: center;
+}

@@ -1,5 +1,5 @@
 'use client';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './viewer.css';
 import {
   Button,
@@ -16,14 +16,15 @@ import {
 } from 'antd';
 import { Editor } from '@monaco-editor/react';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
-import _ from 'lodash';
+import _, { debounce, throttle } from 'lodash';
 import { findNodeNameSpace, getNodeByNameSpace, searchNodeWithMatchedPosition } from './helpers';
 import { fieldNames, sampleCode } from './constants';
 import dynamic from 'next/dynamic';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faMoon, faRotate, faSun, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { SelectedNodeNamespace } from './selected-node-namespace';
 import Link from 'antd/es/typography/Link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGear, faMoon, faRotate, faSun, faWarning } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import Image from 'next/image';
 
 const { Header, Footer, Content } = Layout;
@@ -121,11 +122,41 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     jsonDataRef.current = jsonData;
   }, [jsonData]);
 
+  const throttledGetData = useMemo(
+    () =>
+      throttle(async (data) => {
+        try {
+          const result = await getData(data);
+          return result;
+        } catch (error) {
+          throw error;
+        }
+      }, 3000),
+    []
+  );
+
+  const debouncedGetData = useMemo(
+    () =>
+      debounce(async (data) => {
+        try {
+          setIsParsing(true);
+          const result = await getData(data);
+          setJsonData({
+            data: JSON.parse(result.result),
+          });
+          setIsParsing(false);
+        } catch (error) {
+          console.error(error);
+        }
+      }, 1000),
+    []
+  );
+
   useEffect(() => {
     async function parse() {
       try {
         setIsParsing(true);
-        const data = await getData(textAreaData);
+        const data = await throttledGetData(textAreaData);
         setJsonData({
           data: JSON.parse(data.result),
         });
@@ -137,7 +168,11 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
       }
     }
     parse();
-  }, [textAreaData]);
+  }, [textAreaData, throttledGetData]);
+
+  useEffect(() => {
+    debouncedGetData(textAreaData);
+  }, [textAreaData, debouncedGetData]);
 
   useEffect(() => {
     const editorModel = editorRef.current?.getModel();
@@ -224,11 +259,20 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
             </div>
           </div>
 
-          <Button
-            shape='circle'
-            icon={isDarkMode ? <FontAwesomeIcon icon={faSun} /> : <FontAwesomeIcon icon={faMoon} />}
-            onClick={() => setIsDarkMode(!isDarkMode)}
-          />
+          <div className='flex gap-4'>
+            <Button
+              type='text'
+              shape='circle'
+              icon={
+                isDarkMode ? <FontAwesomeIcon icon={faSun} size='xl' /> : <FontAwesomeIcon icon={faMoon} size='xl' />
+              }
+              onClick={() => setIsDarkMode(!isDarkMode)}
+            />
+
+            <Link href='https://github.com/RightCapitalHQ/php-ast-viewer'>
+              <Button type='text' shape='circle' icon={<FontAwesomeIcon icon={faGithub} size='xl' />} />
+            </Link>
+          </div>
         </Header>
         <Content style={contentStyle}>
           <div className='flex flex-col w-[100%] h-[100%]'>
@@ -335,7 +379,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                   )}
                 </div>
 
-                <div className='w-[100%] h-[40px] mb-[8px]' style={{ backgroundColor: token.colorBgBase }}>
+                <div className='w-[100%] h-[40px] mb-[8px]' style={{ backgroundColor: token.colorBgContainer }}>
                   <SelectedNodeNamespace
                     jsonData={jsonDataRef.current}
                     namespace={currentNamespace}
@@ -378,9 +422,6 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
             </div>
           </div>
         </Content>
-        <Footer style={footerStyle}>
-          <Link href='https://github.com/RightCapitalHQ'>GitHub</Link>
-        </Footer>
       </Layout>
     </div>
   );

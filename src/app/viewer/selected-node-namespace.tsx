@@ -3,6 +3,8 @@ import { getNodeByNameSpace, isPhpParserASTNode as isPhpParserAstNode } from './
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 interface SelectedNodeInfoProps {
   namespace: string[];
@@ -108,13 +110,14 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
   return (
     <div className='flex items-center w-[100%] h-[100%] justify-evenly'>
       <Button
+        type='text'
         className='p-[4px]'
         onClick={() => {
           scrollContainerRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
         }}
         disabled={disableScrollButton}
       >
-        {'<'}
+        <FontAwesomeIcon icon={faChevronLeft} />
       </Button>
 
       <Breadcrumb
@@ -155,13 +158,14 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
       </Breadcrumb>
 
       <Button
+        type='text'
         className='p-[4px]'
         onClick={() => {
           scrollContainerRef.current?.scrollTo({ left: 1000, behavior: 'smooth' });
         }}
         disabled={disableScrollButton}
       >
-        {'>'}
+        <FontAwesomeIcon icon={faChevronRight} />
       </Button>
     </div>
   );
