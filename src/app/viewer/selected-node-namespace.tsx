@@ -120,10 +120,7 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
         <FontAwesomeIcon icon={faChevronLeft} />
       </Button>
 
-      <Breadcrumb
-        className='namespace-breadcrumb w-[calc(100%-80px)] leading-[32px] overflow-x-auto'
-        // separator={'>'}
-      >
+      <Breadcrumb className='namespace-breadcrumb w-[calc(100%-80px)] leading-[32px] overflow-x-auto'>
         {namespace.map((value, index) => {
           const currentNamespace = namespace.slice(0, index + 1);
           const node = getNodeByNameSpace({ root: jsonData }, currentNamespace);

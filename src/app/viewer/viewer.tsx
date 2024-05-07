@@ -1,5 +1,5 @@
 'use client';
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import './viewer.css';
 import {
   Button,
@@ -25,24 +25,12 @@ import Link from 'antd/es/typography/Link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faMoon, faRotate, faSun, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import Image from 'next/image';
 
-const { Header, Footer, Content } = Layout;
+const { Header, Content } = Layout;
 
 const contentStyle: React.CSSProperties = {
-  // textAlign: 'center',
-  // minHeight: 120,
-  // lineHeight: '120px',
   color: '#fff',
-  // backgroundColor: '#0958d9',
 };
-
-// const siderStyle: React.CSSProperties = {
-//   textAlign: 'center',
-//   lineHeight: '120px',
-//   color: '#fff',
-//   backgroundColor: '#1677ff',
-// };
 
 const layoutStyle = {
   borderRadius: 8,
@@ -108,14 +96,6 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: token.colorBgLayout,
-  };
-
-  const footerStyle: React.CSSProperties = {
-    height: '36px',
-    padding: '12px 50px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
   };
 
   useEffect(() => {
@@ -228,7 +208,6 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
       <Layout style={layoutStyle}>
         <Header style={headerStyle}>
           <div className='flex'>
-            {/* <Image src='./rc-logo.svg' alt='' className='absolute z-10 opacity-10' priority width={1500} height={700} /> */}
             <Typography.Title className='m-4 text-nowrap' level={3}>
               🔎 PHP AST Viewer
             </Typography.Title>
