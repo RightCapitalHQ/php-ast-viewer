@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/parse.php": {
+      "runtime": "vercel-php@0.7.1",
+      "excludeFiles": "{.next,*.cache,node_modules,public,app}/**"
+    }
+  },
+  "routes": [{ "src": "/parse", "dest": "/api/parse.php" }]
+}

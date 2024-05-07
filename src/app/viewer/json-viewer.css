@@ -1,0 +1,18 @@
+#json-viewer {
+  text-wrap: nowrap;
+}
+
+#json-viewer .object-key-val {
+  width: fit-content;
+}
+
+#json-viewer .clickable {
+  background-color: #919ece33;
+  border-radius: 4px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+#json-viewer .clickable:hover {
+  background-color: #919ece66;
+}
