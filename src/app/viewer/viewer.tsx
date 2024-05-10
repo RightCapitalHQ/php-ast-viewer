@@ -80,7 +80,8 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
   const [isDisplayRawJson, setIsDisplayRawJson] = useState(true);
   const [selectedNode, setSelectedNode] = useState<INode | undefined>(undefined);
   const [expandDepth, setExpandDepth] = useState(3);
-  const [editorContainerSize, setEditorContainerSize] = useState((window.innerWidth - 12) / 2);
+  const [editorContainerSize, setEditorContainerSize] = useState(0);
+  const [windowInnerWidth, setWindowInnerWidth] = useState(0);
 
   const jsonDataRef = useRef(jsonData);
   const editorRef = useRef<any>();
@@ -98,6 +99,11 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     alignItems: 'center',
     backgroundColor: token.colorBgLayout,
   };
+
+  useEffect(() => {
+    setWindowInnerWidth(window.innerWidth);
+    setEditorContainerSize((window.innerWidth - 12) / 2);
+  }, []);
 
   useEffect(() => {
     jsonDataRef.current = jsonData;
@@ -176,7 +182,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
   const dividerMouseDownHandler = () => {
     const boundaryWidth = 300;
     const minSize = boundaryWidth;
-    const maxSize = window.innerWidth - boundaryWidth;
+    const maxSize = windowInnerWidth - boundaryWidth;
     const onMouseMove = (mouseMoveEvent: { pageX: number }) => {
       setEditorContainerSize(Math.min(maxSize, Math.max(minSize, mouseMoveEvent.pageX)));
     };
@@ -317,7 +323,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                 <div className='editor-viewer-divider' onMouseDown={dividerMouseDownHandler} />
               </div>
 
-              <div className='h-[100%] relative' style={{ width: window.innerWidth - editorContainerSize - 12 }}>
+              <div className='h-[100%] relative' style={{ width: windowInnerWidth - editorContainerSize - 12 }}>
                 {isParsing && <Spin className='absolute left-1/2 top-1/2' />}
 
                 <div className='fixed flex flex-col z-10 top-[110px] right-[10px]'>
