@@ -1,6 +1,5 @@
 'use client';
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
-import './viewer.css';
 import {
   Button,
   Checkbox,
@@ -25,6 +24,7 @@ import Link from 'antd/es/typography/Link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faMoon, faRotate, faSun, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import './viewer.css';
 
 const { Header, Content } = Layout;
 
@@ -80,6 +80,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
   const [isDisplayRawJson, setIsDisplayRawJson] = useState(true);
   const [selectedNode, setSelectedNode] = useState<INode | undefined>(undefined);
   const [expandDepth, setExpandDepth] = useState(3);
+  const [editorContainerSize, setEditorContainerSize] = useState((window.innerWidth - 12) / 2);
 
   const jsonDataRef = useRef(jsonData);
   const editorRef = useRef<any>();
@@ -172,6 +173,22 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     }
   }, [selectedNode]);
 
+  const dividerMouseDownHandler = () => {
+    const boundaryWidth = 300;
+    const minSize = boundaryWidth;
+    const maxSize = window.innerWidth - boundaryWidth;
+    const onMouseMove = (mouseMoveEvent: { pageX: number }) => {
+      setEditorContainerSize(Math.min(maxSize, Math.max(minSize, mouseMoveEvent.pageX)));
+    };
+    const onMouseUp = () => {
+      document.body.removeEventListener('mousemove', onMouseMove);
+      document.body.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.body.addEventListener('mousemove', onMouseMove);
+    document.body.addEventListener('mouseup', onMouseUp);
+  };
+
   const clearRangeAndSelectedNode = () => {
     setCurrentNamespace([]);
     setSelectedNode(undefined);
@@ -256,7 +273,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
         <Content style={contentStyle}>
           <div className='flex flex-col w-[100%] h-[100%]'>
             <div className='flex w-[100%] h-[100%]'>
-              <div className='w-[calc(50%)] mr-2 h-[100%] overflow-y-auto relative'>
+              <div className='h-[100%] overflow-y-auto relative' style={{ width: editorContainerSize - 6 }}>
                 <Editor
                   className='codeEditor'
                   theme={isDarkMode ? 'vs-dark' : 'light'}
@@ -296,7 +313,11 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                 />
               </div>
 
-              <div className='w-[calc(50%)] h-[100%] relative'>
+              <div className='w-[12px] h-[100%] flex align-middle'>
+                <div className='editor-viewer-divider' onMouseDown={dividerMouseDownHandler} />
+              </div>
+
+              <div className='h-[100%] relative' style={{ width: window.innerWidth - editorContainerSize - 12 }}>
                 {isParsing && <Spin className='absolute left-1/2 top-1/2' />}
 
                 <div className='fixed flex flex-col z-10 top-[110px] right-[10px]'>
