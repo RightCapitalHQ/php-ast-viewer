@@ -21,6 +21,16 @@ export default function JsonViewer(props: JsonViewerProps) {
 
   const [currentHighlightNode, setCurrentHighlightNode] = useState<HTMLElement | null>(null);
 
+  const updateVariableRows = () => {
+    const variableRows = Array.from(document.getElementsByClassName('variable-row'));
+    variableRows.forEach((row) => {
+      const objectKey = row.querySelector('.object-key');
+      if ((objectKey?.firstChild as HTMLSpanElement).innerHTML === 'nodeType') {
+        (row.querySelector('.variable-value .string-value') as HTMLSpanElement).classList.add('clickable');
+      }
+    });
+  };
+
   useLayoutEffect(() => {
     currentHighlightNode?.classList.remove('selected');
     const jsonViewer = document.getElementById('json-viewer');
@@ -37,14 +47,8 @@ export default function JsonViewer(props: JsonViewerProps) {
   }, [currentNamespace]);
 
   useEffect(() => {
-    const variableRows = Array.from(document.getElementsByClassName('variable-row'));
-    variableRows.forEach((row) => {
-      const objectKey = row.querySelector('.object-key');
-      if ((objectKey?.firstChild as HTMLSpanElement).innerHTML === 'nodeType') {
-        (row.querySelector('.variable-value .string-value') as HTMLSpanElement).classList.add('clickable');
-      }
-    });
-  }, [currentNamespace]);
+    updateVariableRows();
+  }, [currentNamespace, jsonData]);
 
   return (
     <div id={'json-viewer'} className={'json-viewer'}>
