@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
 import _ from 'lodash';
 import ReactJson, { CollapsedFieldProps, OnSelectProps } from '@yilun-sun/react-json-view';
@@ -21,16 +21,6 @@ export default function JsonViewer(props: JsonViewerProps) {
 
   const [currentHighlightNode, setCurrentHighlightNode] = useState<HTMLElement | null>(null);
 
-  const updateVariableRows = () => {
-    const variableRows = Array.from(document.getElementsByClassName('variable-row'));
-    variableRows.forEach((row) => {
-      const objectKey = row.querySelector('.object-key');
-      if ((objectKey?.firstChild as HTMLSpanElement).innerHTML === 'nodeType') {
-        (row.querySelector('.variable-value .string-value') as HTMLSpanElement).classList.add('clickable');
-      }
-    });
-  };
-
   useLayoutEffect(() => {
     currentHighlightNode?.classList.remove('selected');
     const jsonViewer = document.getElementById('json-viewer');
@@ -46,10 +36,6 @@ export default function JsonViewer(props: JsonViewerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentNamespace]);
 
-  useEffect(() => {
-    updateVariableRows();
-  }, [currentNamespace, jsonData]);
-
   return (
     <div id={'json-viewer'} className={'json-viewer'}>
       <ReactJson
@@ -59,6 +45,7 @@ export default function JsonViewer(props: JsonViewerProps) {
         enableClipboard={enableClipboard}
         displayDataTypes={false}
         theme={isDarkMode ? 'railscasts' : 'rjv-default'}
+        forceCalculateShouldCollapseOnNamespaceUpdate={currentNamespace}
         shouldCollapse={(field: CollapsedFieldProps) => {
           if (currentNamespace.join('-').startsWith(field.namespace.join('-'))) {
             return false;

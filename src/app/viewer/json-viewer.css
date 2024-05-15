@@ -6,13 +6,14 @@
   width: fit-content;
 }
 
-#json-viewer .clickable {
-  background-color: #919ece33;
+/* #json-viewer .variable-row:hover {
   border-radius: 4px;
-  padding: 2px;
+  background-color: #7a86b866;
   cursor: pointer;
-}
+} */
 
-#json-viewer .clickable:hover {
-  background-color: #919ece66;
+#json-viewer .object-key-val:not([id$='attributes']) > .object-container > .object-content > .variable-row:hover {
+  border-radius: 4px;
+  background-color: #7a86b866;
+  cursor: pointer;
 }

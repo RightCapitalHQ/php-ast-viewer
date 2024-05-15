@@ -18,7 +18,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@rightcapital/php-parser": "1.1.2",
     "@types/lodash": "^4.17.0",
-    "@yilun-sun/react-json-view": "^1.23.0",
+    "@yilun-sun/react-json-view": "^1.25.2",
     "antd": "^5.16.2",
     "lodash": "^4.17.21",
     "next": "14.1.0",

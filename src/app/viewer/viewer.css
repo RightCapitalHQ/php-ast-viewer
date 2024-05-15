@@ -90,11 +90,13 @@
   height: 50%;
   width: 100%;
   margin: auto 4px;
-  border-inline-start: 4px solid rgba(5, 5, 5, 0.12);
+  border-inline-start-width: 4px;
+  border-inline-start-style: solid;
   border-radius: 2px;
+  opacity: 0.2;
 }
 
 .editor-viewer-divider:hover {
-  border-inline-start-color: rgba(5, 5, 5, 0.24);
+  opacity: 0.4;
   cursor: ew-resize;
 }
