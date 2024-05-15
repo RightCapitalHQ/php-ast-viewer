@@ -27,8 +27,8 @@ dependencies:
     specifier: ^4.17.0
     version: 4.17.0
   '@yilun-sun/react-json-view':
-    specifier: ^1.23.0
-    version: 1.23.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^1.25.2
+    version: 1.25.2(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
   antd:
     specifier: ^5.16.2
     version: 5.16.2(react-dom@18.2.0)(react@18.2.0)
@@ -695,8 +695,8 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@yilun-sun/react-json-view@1.23.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-zMj5QM+jXiXrqWQ4Vzql4JSDYI5wVxaaBL4HsCipGeOkLjbC4dAAiwjbvNCpK4ih9yase6Gs9tE4mprqtBCPgQ==}
+  /@yilun-sun/react-json-view@1.25.2(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-LPtkT8yDCH6n5wdZePI4e/Yvdw+W9wTxjYmXHqqctKR08p4XcvUYxdYqnSM8LFryfZ2fxjwzCUmInxMwrdZrxw==}
     peerDependencies:
       react: '>= 15'
       react-dom: '>= 15'

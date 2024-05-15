@@ -11,19 +11,22 @@ import {
   Spin,
   theme,
   Tooltip,
+  Tour,
+  TourProps,
   Typography,
 } from 'antd';
 import { Editor } from '@monaco-editor/react';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
 import _, { debounce, throttle } from 'lodash';
-import { findNodeNameSpace, getNodeByNameSpace, searchNodeWithMatchedPosition } from './helpers';
-import { fieldNames, sampleCode } from './constants';
+import { findNodeNameSpace, getNodeByNameSpace, isPhpParserASTNode, searchNodeWithMatchedPosition } from './helpers';
+import { fieldNames, sampleCode, themeColor, tourSteps } from './constants';
 import dynamic from 'next/dynamic';
 import { SelectedNodeNamespace } from './selected-node-namespace';
 import Link from 'antd/es/typography/Link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faMoon, faRotate, faSun, faWarning } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faMoon, faLocationDot, faRotate, faSun, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { RCLogo } from './rc-logo';
 import './viewer.css';
 
 const { Header, Content } = Layout;
@@ -36,6 +39,17 @@ const layoutStyle = {
   borderRadius: 8,
   overflow: 'hidden',
   width: '100%',
+};
+
+const basicHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  textAlign: 'center',
+  color: '#fff',
+  height: 60,
+  lineHeight: '64px',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '0 20px 0 10px',
 };
 
 async function getData(code: string) {
@@ -65,6 +79,9 @@ const TreeViewer = dynamic(() => import('./tree-viewer'), {
 
 const { useToken } = theme;
 
+const dividerWidth = 12;
+const boundaryWidth = 300;
+
 type BaseViewerProps = {
   isDarkMode: boolean;
   setIsDarkMode: Dispatch<SetStateAction<boolean>>;
@@ -82,6 +99,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
   const [expandDepth, setExpandDepth] = useState(3);
   const [editorContainerSize, setEditorContainerSize] = useState(0);
   const [windowInnerWidth, setWindowInnerWidth] = useState(0);
+  const [isTourOpen, setIsTourOpen] = useState(false);
 
   const jsonDataRef = useRef(jsonData);
   const editorRef = useRef<any>();
@@ -89,20 +107,11 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
 
   const { token } = useToken();
 
-  const headerStyle: React.CSSProperties = {
-    display: 'flex',
-    textAlign: 'center',
-    color: '#fff',
-    height: 60,
-    lineHeight: '64px',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: token.colorBgLayout,
-  };
+  const headerStyle = { ...basicHeaderStyle, backgroundColor: token.colorBgLayout };
 
   useEffect(() => {
     setWindowInnerWidth(window.innerWidth);
-    setEditorContainerSize((window.innerWidth - 12) / 2);
+    setEditorContainerSize((window.innerWidth - dividerWidth) / 2);
   }, []);
 
   useEffect(() => {
@@ -180,11 +189,10 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
   }, [selectedNode]);
 
   const dividerMouseDownHandler = () => {
-    const boundaryWidth = 300;
     const minSize = boundaryWidth;
     const maxSize = windowInnerWidth - boundaryWidth;
     const onMouseMove = (mouseMoveEvent: { pageX: number }) => {
-      setEditorContainerSize(Math.min(maxSize, Math.max(minSize, mouseMoveEvent.pageX)));
+      setEditorContainerSize(Math.min(maxSize, Math.max(minSize, mouseMoveEvent.pageX - dividerWidth / 2)));
     };
     const onMouseUp = () => {
       document.body.removeEventListener('mousemove', onMouseMove);
@@ -226,8 +234,28 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     }
   };
 
+  const ref1 = useRef(null);
+  const ref2 = useRef(null);
+  const ref3 = useRef(null);
+
+  const steps: TourProps['steps'] = [
+    {
+      ...tourSteps.editor,
+      target: () => ref1.current,
+    },
+    {
+      ...tourSteps.viewer,
+      target: () => ref2.current,
+    },
+    {
+      ...tourSteps.navigation,
+      target: () => ref3.current,
+    },
+  ];
+
   return (
     <div className='flex flex-col items-start h-[100vh]' style={{ backgroundColor: token.colorBgContainer }}>
+      <Tour open={isTourOpen} onClose={() => setIsTourOpen(false)} steps={steps} />
       <Layout style={layoutStyle}>
         <Header style={headerStyle}>
           <div className='flex'>
@@ -271,15 +299,26 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
               onClick={() => setIsDarkMode(!isDarkMode)}
             />
 
+            <Button
+              type='text'
+              shape='circle'
+              icon={<FontAwesomeIcon icon={faLocationDot} size='xl' />}
+              onClick={() => setIsTourOpen(true)}
+            />
+
             <Link href='https://github.com/RightCapitalHQ/php-ast-viewer'>
               <Button type='text' shape='circle' icon={<FontAwesomeIcon icon={faGithub} size='xl' />} />
+            </Link>
+
+            <Link href='https://opensource.rightcapital.com'>
+              <Button type='text' shape='circle' icon={<RCLogo className='w-[21px] h-[21px]' token={token} />} />
             </Link>
           </div>
         </Header>
         <Content style={contentStyle}>
           <div className='flex flex-col w-[100%] h-[100%]'>
             <div className='flex w-[100%] h-[100%]'>
-              <div className='h-[100%] overflow-y-auto relative' style={{ width: editorContainerSize - 6 }}>
+              <div className='h-[100%] overflow-y-auto relative' style={{ width: editorContainerSize }} ref={ref1}>
                 <Editor
                   className='codeEditor'
                   theme={isDarkMode ? 'vs-dark' : 'light'}
@@ -320,10 +359,17 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
               </div>
 
               <div className='w-[12px] h-[100%] flex align-middle'>
-                <div className='editor-viewer-divider' onMouseDown={dividerMouseDownHandler} />
+                <div
+                  className='editor-viewer-divider'
+                  style={{ borderInlineColor: token.colorText }}
+                  onMouseDown={dividerMouseDownHandler}
+                />
               </div>
 
-              <div className='h-[100%] relative' style={{ width: windowInnerWidth - editorContainerSize - 12 }}>
+              <div
+                className='h-[100%] relative'
+                style={{ width: windowInnerWidth - editorContainerSize - dividerWidth }}
+              >
                 {isParsing && <Spin className='absolute left-1/2 top-1/2' />}
 
                 <div className='fixed flex flex-col z-10 top-[110px] right-[10px]'>
@@ -385,7 +431,11 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                   )}
                 </div>
 
-                <div className='w-[100%] h-[40px] mb-[8px]' style={{ backgroundColor: token.colorBgContainer }}>
+                <div
+                  className='w-[100%] h-[40px] mb-[8px]'
+                  style={{ backgroundColor: token.colorBgContainer }}
+                  ref={ref3}
+                >
                   <SelectedNodeNamespace
                     jsonData={jsonDataRef.current}
                     namespace={currentNamespace}
@@ -396,6 +446,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                 <div
                   className='h-[calc(100%-48px)] overflow-y-auto'
                   style={{ backgroundColor: token.colorBgContainer }}
+                  ref={ref2}
                 >
                   {!isDisplayRawJson &&
                     jsonData?.data?.map((node) => (
@@ -417,9 +468,12 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                       currentNamespace={currentNamespace}
                       expandDepth={expandDepth}
                       onSelect={(props) => {
+                        console.log(props.namespace);
                         const node = getNodeByNameSpace(jsonDataRef.current, props.namespace as (string | number)[]);
 
-                        setSelectedNode(node);
+                        if (isPhpParserASTNode(node)) {
+                          setSelectedNode(node);
+                        }
                       }}
                     />
                   )}
@@ -441,8 +495,8 @@ export default function Viewer() {
       theme={{
         algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
-          colorPrimary: '#5070e6',
-          colorLink: '#5070e6',
+          colorPrimary: themeColor,
+          colorLink: themeColor,
         },
       }}
     >
