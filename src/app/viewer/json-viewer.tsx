@@ -3,6 +3,9 @@ import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
 import _ from 'lodash';
 import ReactJson, { CollapsedFieldProps, OnSelectProps } from '@yilun-sun/react-json-view';
 import './json-viewer.css';
+import { Spin } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 interface JsonViewerProps {
   jsonData: { data: INode[] };
@@ -13,11 +16,20 @@ interface JsonViewerProps {
   currentNamespace: string[];
   expandDepth: number;
   isDarkMode: boolean;
+  isParsing: boolean;
 }
 
 export default function JsonViewer(props: JsonViewerProps) {
-  const { onSelect, enableClipboard, jsonData, alwaysCollapseFieldNames, currentNamespace, expandDepth, isDarkMode } =
-    props;
+  const {
+    onSelect,
+    isParsing,
+    enableClipboard,
+    jsonData,
+    alwaysCollapseFieldNames,
+    currentNamespace,
+    expandDepth,
+    isDarkMode,
+  } = props;
 
   const [currentHighlightNode, setCurrentHighlightNode] = useState<HTMLElement | null>(null);
 
@@ -38,13 +50,16 @@ export default function JsonViewer(props: JsonViewerProps) {
 
   return (
     <div id={'json-viewer'} className={'json-viewer'}>
+      {document !== undefined && isParsing && (
+        <Spin size='large' indicator={<FontAwesomeIcon icon={faCircleNotch} spin />} />
+      )}
       <ReactJson
         onSelect={onSelect}
         quotesOnKeys={false}
         src={jsonData}
         enableClipboard={enableClipboard}
         displayDataTypes={false}
-        theme={isDarkMode ? 'railscasts' : 'rjv-default'}
+        theme={isDarkMode ? 'tomorrow' : 'rjv-default'}
         forceCalculateShouldCollapseOnNamespaceUpdate={currentNamespace}
         shouldCollapse={(field: CollapsedFieldProps) => {
           if (currentNamespace.join('-').startsWith(field.namespace.join('-'))) {

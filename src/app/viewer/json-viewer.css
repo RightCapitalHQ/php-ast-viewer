@@ -6,14 +6,18 @@
   width: fit-content;
 }
 
-/* #json-viewer .variable-row:hover {
-  border-radius: 4px;
-  background-color: #7a86b866;
-  cursor: pointer;
-} */
-
 #json-viewer .object-key-val:not([id$='attributes']) > .object-container > .object-content > .variable-row:hover {
-  border-radius: 4px;
   background-color: #7a86b866;
   cursor: pointer;
+}
+
+#json-viewer .ant-spin {
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.react-json-view {
+  padding: 10px;
 }

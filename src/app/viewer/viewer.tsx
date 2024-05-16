@@ -27,6 +27,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faMoon, faLocationDot, faRotate, faSun, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { RCLogo } from './rc-logo';
+import Image from 'next/image';
+import '@fortawesome/fontawesome-svg-core/styles.css';
 import './viewer.css';
 
 const { Header, Content } = Layout;
@@ -97,7 +99,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
   const [isDisplayRawJson, setIsDisplayRawJson] = useState(true);
   const [selectedNode, setSelectedNode] = useState<INode | undefined>(undefined);
   const [expandDepth, setExpandDepth] = useState(3);
-  const [editorContainerSize, setEditorContainerSize] = useState(0);
+  const [editorContainerSize, setEditorContainerSize] = useState<string | number>('50%');
   const [windowInnerWidth, setWindowInnerWidth] = useState(0);
   const [isTourOpen, setIsTourOpen] = useState(false);
 
@@ -203,6 +205,16 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     document.body.addEventListener('mouseup', onMouseUp);
   };
 
+  const editorViewerDivider = (
+    <div className='w-[12px] h-[100%] flex align-middle'>
+      <div
+        className='editor-viewer-divider'
+        style={{ borderInlineColor: token.colorText }}
+        onMouseDown={dividerMouseDownHandler}
+      />
+    </div>
+  );
+
   const clearRangeAndSelectedNode = () => {
     setCurrentNamespace([]);
     setSelectedNode(undefined);
@@ -253,18 +265,26 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
     },
   ];
 
+  const viewerWidth =
+    typeof editorContainerSize === 'string'
+      ? editorContainerSize
+      : windowInnerWidth - editorContainerSize - dividerWidth;
+
   return (
     <div className='flex flex-col items-start h-[100vh]' style={{ backgroundColor: token.colorBgContainer }}>
       <Tour open={isTourOpen} onClose={() => setIsTourOpen(false)} steps={steps} />
       <Layout style={layoutStyle}>
         <Header style={headerStyle}>
           <div className='flex'>
-            <Typography.Title className='m-4 text-nowrap' level={3}>
-              🔎 PHP AST Viewer
-            </Typography.Title>
-            <div className='flex'>
+            <div className='m-auto text-nowrap flex items-center'>
+              <Typography.Title level={4} className='m-[0!important] flex items-center'>
+                <Image src='./favicon.svg' className='ml-2 mr-3' alt='' width={28} height={28} />
+                <span className='m-0 mr-3 leading-[20px] text-lg'>PHP AST Viewer</span>
+              </Typography.Title>
+            </div>
+            <div className='flex items-center'>
               <Button
-                className='m-4 mr-2'
+                className='mr-2'
                 onClick={() => {
                   setTextareaData(sampleCode);
                 }}
@@ -273,7 +293,6 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                 Load sample code
               </Button>
               <Button
-                className='m-4 ml-2'
                 onClick={async () => {
                   try {
                     const text = await navigator.clipboard.readText();
@@ -318,7 +337,11 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
         <Content style={contentStyle}>
           <div className='flex flex-col w-[100%] h-[100%]'>
             <div className='flex w-[100%] h-[100%]'>
-              <div className='h-[100%] overflow-y-auto relative' style={{ width: editorContainerSize }} ref={ref1}>
+              <div
+                className='h-[100%] overflow-y-auto relative'
+                style={{ width: editorContainerSize, backgroundColor: token.colorBgBase }}
+                ref={ref1}
+              >
                 <Editor
                   className='codeEditor'
                   theme={isDarkMode ? 'vs-dark' : 'light'}
@@ -358,20 +381,15 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                 />
               </div>
 
-              <div className='w-[12px] h-[100%] flex align-middle'>
-                <div
-                  className='editor-viewer-divider'
-                  style={{ borderInlineColor: token.colorText }}
-                  onMouseDown={dividerMouseDownHandler}
-                />
-              </div>
+              {editorViewerDivider}
 
               <div
                 className='h-[100%] relative'
-                style={{ width: windowInnerWidth - editorContainerSize - dividerWidth }}
+                style={{
+                  width: viewerWidth,
+                  backgroundColor: token.colorBgBase,
+                }}
               >
-                {isParsing && <Spin className='absolute left-1/2 top-1/2' />}
-
                 <div className='fixed flex flex-col z-10 top-[110px] right-[10px]'>
                   <Button
                     className='m-2'
@@ -431,17 +449,15 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                   )}
                 </div>
 
-                <div
-                  className='w-[100%] h-[40px] mb-[8px]'
-                  style={{ backgroundColor: token.colorBgContainer }}
-                  ref={ref3}
-                >
+                <div className='w-[100%] h-[40px]' style={{ backgroundColor: token.colorBgContainer }} ref={ref3}>
                   <SelectedNodeNamespace
                     jsonData={jsonDataRef.current}
                     namespace={currentNamespace}
                     onSelectNamespace={setSelectedNode}
                   />
                 </div>
+
+                <div className='w-[100%] h-[8px]' style={{ backgroundColor: token.colorBgLayout }} />
 
                 <div
                   className='h-[calc(100%-48px)] overflow-y-auto'
@@ -460,6 +476,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
 
                   {isDisplayRawJson && (
                     <JsonViewer
+                      isParsing={isParsing}
                       isDarkMode={isDarkMode}
                       jsonData={jsonData}
                       selectedNode={selectedNode}
