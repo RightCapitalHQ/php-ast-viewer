@@ -75,6 +75,7 @@ export const tourSteps: { [key in string]: TourStepProps } = {
       </>
     ),
     placement: 'right',
+    type: 'primary',
   },
   viewer: {
     title: 'AST Viewer',
@@ -90,6 +91,7 @@ export const tourSteps: { [key in string]: TourStepProps } = {
       </>
     ),
     placement: 'left',
+    type: 'primary',
   },
   navigation: {
     title: 'Navigation',
@@ -106,5 +108,6 @@ export const tourSteps: { [key in string]: TourStepProps } = {
         </p>
       </>
     ),
+    type: 'primary',
   },
 };
