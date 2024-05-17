@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "all-in-one": "composer install && pnpm install && pnpm dev",
+    "install-and-dev": "composer install && pnpm install && pnpm dev",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
