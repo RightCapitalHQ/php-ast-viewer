@@ -10,6 +10,9 @@
     "lint": "next lint",
     "copy-vendor": "cp -R vendor/ .next/server/vendor/"
   },
+  "author": {
+    "name": "Yilun Sun"
+  },
   "dependencies": {
     "@ant-design/cssinjs": "^1.20.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
