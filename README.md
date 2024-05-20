@@ -2,7 +2,6 @@ The PHP AST Viewer is a tool for viewing the Abstract Syntax Tree of PHP code. B
 
 <img width="1300" alt="image" src="https://github.com/RightCapitalHQ/php-ast-viewer/assets/43896664/e1568e1d-2da1-4af7-955d-276d413d3338">
 
-
 ## Getting Started
 
 First, run commands by this sequence for development server:
@@ -26,3 +25,7 @@ After the development server is running, use the following command to copy the `
 ```bash
 pnpm copy-vendor
 ```
+
+## Demo video
+
+https://github.com/RightCapitalHQ/php-ast-viewer/assets/43896664/e6dd70c3-5e58-466d-808e-6eaac383d37f
