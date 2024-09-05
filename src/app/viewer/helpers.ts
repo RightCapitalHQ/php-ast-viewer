@@ -119,3 +119,11 @@ export function getNodeByNameSpace(root: any, namespace: (string | number)[]) {
 
   return data;
 }
+
+export function prependCodeWithPhpStartTag(code: string) {
+  if (!code.startsWith('<')) {
+    return `<?php\n\n${code}`;
+  } else {
+    return code;
+  }
+}

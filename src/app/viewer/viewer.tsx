@@ -18,7 +18,13 @@ import {
 import { Editor } from '@monaco-editor/react';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
 import _, { debounce, throttle } from 'lodash';
-import { findNodeNameSpace, getNodeByNameSpace, isPhpParserASTNode, searchNodeWithMatchedPosition } from './helpers';
+import {
+  findNodeNameSpace,
+  prependCodeWithPhpStartTag,
+  getNodeByNameSpace,
+  isPhpParserASTNode,
+  searchNodeWithMatchedPosition,
+} from './helpers';
 import { fieldNames, sampleCode, themeColor, tourSteps } from './constants';
 import dynamic from 'next/dynamic';
 import { SelectedNodeNamespace } from './selected-node-namespace';
@@ -296,7 +302,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                 onClick={async () => {
                   try {
                     const text = await navigator.clipboard.readText();
-                    setTextareaData(text);
+                    setTextareaData(prependCodeWithPhpStartTag(text));
                   } catch (error) {
                     console.error(error);
                   }
@@ -347,7 +353,7 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
                   theme={isDarkMode ? 'vs-dark' : 'light'}
                   value={textAreaData}
                   defaultLanguage='php'
-                  onChange={(value) => setTextareaData(value ?? '')}
+                  onChange={(value) => setTextareaData(prependCodeWithPhpStartTag(value ?? ''))}
                   onMount={(editor) => {
                     editorRef.current = editor;
 
