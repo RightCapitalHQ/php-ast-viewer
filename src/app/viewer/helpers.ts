@@ -9,72 +9,47 @@ export function searchNodeWithMatchedPosition(
     column: number;
   }
 ): INode | undefined {
-  const stack = nodes.map((node, index) => ({
-    value: node,
-    visited: false,
-  }));
+  let minNode: INode | undefined = undefined;
+  let minRange = Number.MAX_SAFE_INTEGER;
+  // Use BFS to traverse all nodes
+  const queue: INode[] = [...nodes];
 
-  while (stack.length > 0) {
-    const data = stack.at(-1)!;
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    const nodePosition = node.attributes;
 
-    const nodePosition = data.value.attributes;
+    // Check if the node position contains the target position
+    if (
+      nodePosition.startLine <= position.lineNumber &&
+      nodePosition.endLine >= position.lineNumber &&
+      nodePosition.startFilePos <= position.position &&
+      position.position <= nodePosition.endFilePos
+    ) {
+      // Calculate the size of the node range
+      const rangeSize = nodePosition.endFilePos - nodePosition.startFilePos;
 
-    if (position.position > nodePosition.endFilePos || nodePosition.startFilePos > position.position) {
-      stack.pop();
-      continue;
-    }
-
-    if (data.visited) {
-      if (
-        nodePosition.startLine === position.lineNumber &&
-        nodePosition.startFilePos <= position.position &&
-        position.position <= nodePosition.endFilePos - 1
-      ) {
-        return data.value;
+      // If the range is smaller than the current minimum range, update it
+      if (rangeSize < minRange) {
+        minRange = rangeSize;
+        minNode = node;
       }
-
-      stack.pop();
-
-      continue;
     }
 
-    data.visited = true;
-
-    let hasChildren = false;
-    Object.entries(data.value).forEach(([name, value]) => {
+    // Add all child nodes to the queue
+    Object.entries(node).forEach(([name, value]) => {
       if (Array.isArray(value)) {
-        value.forEach((item, index) => {
+        value.forEach((item) => {
           if (isPhpParserASTNode(item)) {
-            hasChildren = true;
-            stack.push({
-              value: item,
-              visited: false,
-            });
+            queue.push(item);
           }
         });
       } else if (isPhpParserASTNode(value)) {
-        hasChildren = true;
-        stack.push({
-          value,
-          visited: false,
-        });
+        queue.push(value);
       }
     });
-
-    if (!hasChildren) {
-      if (
-        nodePosition.startLine === position.lineNumber &&
-        nodePosition.startFilePos <= position.position &&
-        position.position <= nodePosition.endFilePos - 1
-      ) {
-        return data.value;
-      }
-
-      stack.pop();
-    }
   }
 
-  return undefined;
+  return minNode;
 }
 
 export function isSameNode(target: INode, current: INode) {
