@@ -1,0 +1,198 @@
+{
+  "name": "php-ast-viewer",
+  "displayName": "PHP AST Viewer",
+  "description": "Visualize PHP Abstract Syntax Tree (AST) in VS Code",
+  "version": "0.0.1",
+  "publisher": "rightcapital",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "php",
+    "ast",
+    "parser",
+    "syntax tree",
+    "visualization"
+  ],
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RightCapitalHQ/php-ast-viewer"
+  },
+  "bugs": {
+    "url": "https://github.com/RightCapitalHQ/php-ast-viewer/issues"
+  },
+  "homepage": "https://github.com/RightCapitalHQ/php-ast-viewer#readme",
+  "license": "MIT",
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "phpAstViewer.viewAst",
+        "title": "View PHP AST",
+        "category": "PHP AST"
+      },
+      {
+        "command": "phpAstViewer.parseSelection",
+        "title": "Parse Selection",
+        "category": "PHP AST"
+      },
+      {
+        "command": "phpAstViewer.parseCurrentFile",
+        "title": "Parse Current File",
+        "category": "PHP AST"
+      },
+      {
+        "command": "phpAstViewer.toggleTreeView",
+        "title": "Toggle Tree View",
+        "category": "PHP AST"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceExtname == .php",
+          "command": "phpAstViewer.parseSelection",
+          "group": "phpAst"
+        }
+      ],
+      "editor/title": [
+        {
+          "when": "resourceExtname == .php",
+          "command": "phpAstViewer.viewAst",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "phpAstViewer.viewAst",
+          "when": "resourceExtname == .php"
+        },
+        {
+          "command": "phpAstViewer.parseSelection",
+          "when": "resourceExtname == .php && editorHasSelection"
+        },
+        {
+          "command": "phpAstViewer.parseCurrentFile",
+          "when": "resourceExtname == .php"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "phpAstViewer.viewAst",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a",
+        "when": "resourceExtname == .php"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "phpAstViewer",
+          "title": "PHP AST",
+          "icon": "media/ast-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "phpAstViewer": [
+        {
+          "id": "phpAstTree",
+          "name": "AST Tree",
+          "contextualTitle": "PHP AST Tree"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "PHP AST Viewer",
+      "properties": {
+        "phpAstViewer.autoPrependPhpTag": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically prepend <?php tag if missing"
+        },
+        "phpAstViewer.defaultView": {
+          "type": "string",
+          "enum": [
+            "tree",
+            "json"
+          ],
+          "default": "json",
+          "description": "Default view mode for AST"
+        },
+        "phpAstViewer.expandDepth": {
+          "type": "number",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Default expand depth for AST tree"
+        },
+        "phpAstViewer.enableClipboard": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable clipboard functionality in JSON view"
+        },
+        "phpAstViewer.alwaysCollapseFields": {
+          "type": "array",
+          "default": [
+            "attributes"
+          ],
+          "description": "Fields to always collapse in JSON view"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile && npm run build-webview",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "build-webview": "vite build",
+    "dev-webview": "vite",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts,tsx",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "20.x",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/lodash": "^4.14.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.19.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "@ant-design/cssinjs": "^1.20.0",
+    "@monaco-editor/react": "^4.6.0",
+    "@rightcapital/php-parser": "^1.1.2",
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "@yilun-sun/react-json-view": "^1.25.2",
+    "antd": "^5.16.2",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-treeview": "^0.4.7"
+  }
+}

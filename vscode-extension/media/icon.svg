@@ -1,0 +1,11 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="16" fill="#777BB4"/>
+  <text x="64" y="45" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">PHP</text>
+  <circle cx="64" cy="68" r="6" fill="white"/>
+  <circle cx="40" cy="88" r="5" fill="white"/>
+  <circle cx="88" cy="88" r="5" fill="white"/>
+  <circle cx="64" cy="108" r="5" fill="white"/>
+  <line x1="64" y1="74" x2="64" y2="103" stroke="white" stroke-width="2"/>
+  <line x1="58" y1="80" x2="45" y2="88" stroke="white" stroke-width="2"/>
+  <line x1="70" y1="80" x2="83" y2="88" stroke="white" stroke-width="2"/>
+</svg>

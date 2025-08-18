@@ -1,0 +1,61 @@
+/* the tree node's style */
+.tree-view {
+  overflow-y: hidden;
+  font-size: 14px;
+}
+
+/* style for the children nodes container */
+.tree-view_children {
+  margin-left: 20px;
+}
+
+.tree-view_children-collapsed {
+  height: 0px;
+}
+
+.tree-view_arrow {
+  cursor: pointer;
+  margin-right: 6px;
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.tree-view_arrow:after {
+  font-size: 20px;
+  line-height: 14px;
+  content: '▾';
+}
+
+/* rotate the triangle to close it */
+.tree-view_arrow-collapsed {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+}
+
+/* Node text styling */
+.node-text {
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  display: inline-block;
+  transition: background-color 0.2s;
+}
+
+.node-text:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.node-text.selected {
+  background-color: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.end-node {
+  display: inline-block;
+  margin: 2px 0;
+}

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add:*)",
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm install:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run compile:*)",
+      "Bash(npm run build-webview:*)",
+      "Bash(node:*)",
+      "Bash(npx vsce package:*)",
+      "Bash(npx vsce ls:*)",
+      "Bash(php:*)",
+      "Bash(mv:*)"
+    ],
+    "deny": []
+  }
+}
