@@ -8,6 +8,11 @@ export class WebviewProvider {
     private parserService: ParserService;
     private currentViewMode: 'tree' | 'json' = 'json';
     private disposables: vscode.Disposable[] = [];
+    
+    // Source document tracking
+    private sourceUri?: vscode.Uri;
+    private sourceContent?: string;
+    private sourceVersion?: number;
 
     constructor(context: vscode.ExtensionContext, parserService: ParserService) {
         this.context = context;
@@ -18,6 +23,19 @@ export class WebviewProvider {
         const columnToShowIn = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
+
+        // Store source document information
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor && activeEditor.document.fileName === fileName) {
+            this.sourceUri = activeEditor.document.uri;
+            this.sourceContent = code;
+            this.sourceVersion = activeEditor.document.version;
+        } else {
+            // If the file is not the active editor, still store what we can
+            this.sourceUri = vscode.Uri.file(fileName);
+            this.sourceContent = code;
+            this.sourceVersion = undefined;
+        }
 
         if (this.panel) {
             // If panel exists, reveal it
@@ -70,8 +88,26 @@ export class WebviewProvider {
             return;
         }
 
+        // Update source content when re-parsing
+        this.sourceContent = code;
+        
+        // Update version if we're tracking the same document
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor && this.sourceUri && 
+            activeEditor.document.uri.toString() === this.sourceUri.toString()) {
+            this.sourceVersion = activeEditor.document.version;
+        }
+
         // Parse the PHP code
-        const ast = await this.parserService.parse(code);
+        let ast = await this.parserService.parse(code);
+        
+        // Ensure AST is in the correct format (array of nodes)
+        // PHP parser returns an array, but we need to ensure consistency
+        if (ast && !ast.error) {
+            if (!Array.isArray(ast)) {
+                ast = [ast];
+            }
+        }
         
         // Get configuration
         const config = vscode.workspace.getConfiguration('phpAstViewer');
@@ -116,39 +152,161 @@ export class WebviewProvider {
         }
     }
 
-    private highlightNodeInEditor(nodeInfo: any) {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
+    private async highlightNodeInEditor(nodeInfo: any) {
+        // Handle both direct attributes and nested attributes structure
+        const attributes = nodeInfo.attributes || nodeInfo;
+        
+        // Check if we have valid position information
+        if (!attributes || (attributes.startFilePos === undefined && attributes.startLine === undefined)) {
+            console.warn('Node does not have position information:', nodeInfo);
+            vscode.window.showWarningMessage('Cannot highlight: node has no position information');
             return;
         }
 
-        // Handle both direct attributes and nested attributes structure
-        const attributes = nodeInfo.attributes || nodeInfo;
-        const { startFilePos, endFilePos } = attributes;
-        
-        const startPos = editor.document.positionAt(startFilePos);
-        const endPos = editor.document.positionAt(endFilePos);
-        
-        const range = new vscode.Range(startPos, endPos);
-        
-        // Set selection
-        editor.selection = new vscode.Selection(startPos, endPos);
-        
-        // Reveal the range
-        editor.revealRange(range, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
-        
-        // Add decoration
-        const decorationType = vscode.window.createTextEditorDecorationType({
-            backgroundColor: 'rgba(255, 255, 0, 0.3)',
-            border: '1px solid rgba(255, 255, 0, 0.8)'
-        });
-        
-        editor.setDecorations(decorationType, [range]);
-        
-        // Remove decoration after 2 seconds
-        setTimeout(() => {
-            decorationType.dispose();
-        }, 2000);
+        if (!this.sourceUri) {
+            vscode.window.showErrorMessage('Source file information is not available');
+            return;
+        }
+
+        try {
+            let editor: vscode.TextEditor | undefined;
+            
+            // First, try to find if the document is already open
+            const openDocument = vscode.workspace.textDocuments.find(
+                doc => doc.uri.toString() === this.sourceUri!.toString()
+            );
+
+            if (openDocument) {
+                // Document is open, check if it's visible in any editor
+                editor = vscode.window.visibleTextEditors.find(
+                    e => e.document.uri.toString() === this.sourceUri!.toString()
+                );
+
+                // Check if document has been modified
+                if (this.sourceVersion !== undefined && openDocument.version !== this.sourceVersion) {
+                    const choice = await vscode.window.showWarningMessage(
+                        'The source file has been modified since parsing. The highlighting might not be accurate.',
+                        'Re-parse',
+                        'Continue Anyway'
+                    );
+                    
+                    if (choice === 'Re-parse') {
+                        // Re-parse the current content
+                        const newContent = openDocument.getText();
+                        await this.updateContent(newContent);
+                        return;
+                    } else if (!choice) {
+                        return; // User cancelled
+                    }
+                }
+
+                if (!editor) {
+                    // Document is open but not visible, show it
+                    editor = await vscode.window.showTextDocument(openDocument, {
+                        viewColumn: vscode.ViewColumn.One,
+                        preserveFocus: false
+                    });
+                }
+            } else {
+                // Document is not open, try to open it
+                try {
+                    const document = await vscode.workspace.openTextDocument(this.sourceUri);
+                    
+                    // Check if content has changed
+                    if (this.sourceContent && document.getText() !== this.sourceContent) {
+                        const choice = await vscode.window.showWarningMessage(
+                            'The source file has been modified since parsing. The highlighting might not be accurate.',
+                            'Re-parse',
+                            'Continue Anyway'
+                        );
+                        
+                        if (choice === 'Re-parse') {
+                            await this.updateContent(document.getText());
+                            return;
+                        } else if (!choice) {
+                            return;
+                        }
+                    }
+
+                    editor = await vscode.window.showTextDocument(document, {
+                        viewColumn: vscode.ViewColumn.One,
+                        preserveFocus: false
+                    });
+                } catch (openError) {
+                    // File doesn't exist or can't be opened
+                    console.error('Failed to open source file:', openError);
+                    
+                    const choice = await vscode.window.showErrorMessage(
+                        `Cannot open source file: ${this.sourceUri.fsPath}\nThe file may have been deleted or moved.`,
+                        'Show Cached Content'
+                    );
+                    
+                    if (choice === 'Show Cached Content' && this.sourceContent) {
+                        // Create a new untitled document with the cached content
+                        const document = await vscode.workspace.openTextDocument({
+                            language: 'php',
+                            content: this.sourceContent
+                        });
+                        editor = await vscode.window.showTextDocument(document, {
+                            viewColumn: vscode.ViewColumn.One,
+                            preserveFocus: false
+                        });
+                        
+                        vscode.window.showInformationMessage('Showing cached content in a new untitled document');
+                    } else {
+                        return;
+                    }
+                }
+            }
+
+            // Now we have an editor, perform the highlighting
+            let startPos: vscode.Position;
+            let endPos: vscode.Position;
+            
+            // Use file positions if available (more accurate)
+            if (attributes.startFilePos !== undefined && attributes.endFilePos !== undefined) {
+                startPos = editor.document.positionAt(attributes.startFilePos);
+                endPos = editor.document.positionAt(attributes.endFilePos);
+            } 
+            // Fallback to line/column positions
+            else if (attributes.startLine !== undefined) {
+                const startLine = Math.max(0, (attributes.startLine || 1) - 1);
+                const endLine = Math.max(0, (attributes.endLine || attributes.startLine || 1) - 1);
+                const startColumn = attributes.startColumn || 0;
+                const endColumn = attributes.endColumn || editor.document.lineAt(endLine).text.length;
+                
+                startPos = new vscode.Position(startLine, startColumn);
+                endPos = new vscode.Position(endLine, endColumn);
+            } else {
+                console.warn('Unable to determine position for node:', nodeInfo);
+                return;
+            }
+            
+            const range = new vscode.Range(startPos, endPos);
+            
+            // Set selection
+            editor.selection = new vscode.Selection(startPos, endPos);
+            
+            // Reveal the range
+            editor.revealRange(range, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+            
+            // Add decoration
+            const decorationType = vscode.window.createTextEditorDecorationType({
+                backgroundColor: 'rgba(255, 255, 0, 0.3)',
+                border: '1px solid rgba(255, 255, 0, 0.8)',
+                borderRadius: '3px'
+            });
+            
+            editor.setDecorations(decorationType, [range]);
+            
+            // Remove decoration after 2 seconds
+            setTimeout(() => {
+                decorationType.dispose();
+            }, 2000);
+        } catch (error) {
+            console.error('Error highlighting node:', error);
+            vscode.window.showErrorMessage('Failed to highlight code position');
+        }
     }
 
     public toggleViewMode() {
@@ -222,6 +380,12 @@ export class WebviewProvider {
 
     public dispose() {
         this.panel = undefined;
+        
+        // Clear source tracking
+        this.sourceUri = undefined;
+        this.sourceContent = undefined;
+        this.sourceVersion = undefined;
+        
         while (this.disposables.length) {
             const disposable = this.disposables.pop();
             if (disposable) {

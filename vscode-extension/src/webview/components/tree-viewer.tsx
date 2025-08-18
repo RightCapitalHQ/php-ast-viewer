@@ -51,10 +51,19 @@ export function TreeViewer(props: TreeViewerProps) {
   function renderNode(node: INode, getChildren: (node: INode) => INode[]): JSX.Element {
     const children = getChildren(node);
     const className = 'node-text' + (node === selectedNode ? ' selected' : '');
-    const nodeTypeName = node.nodeType || (node as any).kind || 'unknown';
+    // Handle both nodeType (PHP parser) and kind (other parsers)
+    const nodeTypeName = (node as any).nodeType || (node as any).kind || 'unknown';
+    
+    const hasValidPosition = node && node.attributes && 
+                           (node.attributes.startFilePos !== undefined || 
+                            node.attributes.startLine !== undefined);
     
     const label = (
-      <div onClick={() => onSelectNode(node)} className={className}>
+      <div 
+        onClick={() => hasValidPosition && onSelectNode(node)} 
+        className={className + (hasValidPosition ? ' clickable' : '')}
+        title={hasValidPosition ? 'Click to highlight in editor' : ''}
+      >
         {nodeTypeName}
       </div>
     );

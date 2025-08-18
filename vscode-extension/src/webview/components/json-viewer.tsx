@@ -62,7 +62,13 @@ export function JsonViewer(props: JsonViewerProps) {
       }
     }
 
-    if (node && typeof node === 'object' && 'attributes' in node) {
+    // Check if this is an AST node (has nodeType and attributes with position info)
+    if (node && typeof node === 'object' && 
+        ('nodeType' in node || 'kind' in node) && 
+        'attributes' in node && 
+        node.attributes && 
+        typeof node.attributes === 'object' &&
+        ('startFilePos' in node.attributes || 'startLine' in node.attributes)) {
       onSelect(node as INode);
     }
   };

@@ -39,14 +39,17 @@
 
 /* Node text styling */
 .node-text {
-  cursor: pointer;
   padding: 2px 4px;
   border-radius: 3px;
   display: inline-block;
   transition: background-color 0.2s;
 }
 
-.node-text:hover {
+.node-text.clickable {
+  cursor: pointer;
+}
+
+.node-text.clickable:hover {
   background-color: var(--vscode-list-hoverBackground);
 }
 
