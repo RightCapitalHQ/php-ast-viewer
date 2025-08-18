@@ -102,3 +102,25 @@ export function prependCodeWithPhpStartTag(code: string) {
     return code;
   }
 }
+
+export function formatNodeType(nodeType: string): string {
+    // Convert camelCase to Title Case
+    return nodeType
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, str => str.toUpperCase())
+        .trim();
+}
+
+export function getNodeInfo(node: INode): { type: string; details: string } {
+    const type = (node as any).nodeType || (node as any).kind || 'Unknown';
+    let details = '';
+
+    // Add specific details based on node type
+    if ((node as any).name) {
+        details = (node as any).name;
+    } else if ((node as any).value !== undefined) {
+        details = String((node as any).value);
+    }
+
+    return { type, details };
+}

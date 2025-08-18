@@ -4,6 +4,7 @@ import { ConfigProvider, theme, Layout, Button, Spin, message } from 'antd';
 import { TreeViewer } from './components/tree-viewer';
 import { JsonViewer } from './components/json-viewer';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
+import { searchNodeWithMatchedPosition, findNodeNameSpace } from './utils/helpers';
 import './app.css';
 
 const { Content } = Layout;
@@ -62,6 +63,12 @@ function App() {
   });
 
   const { token } = useToken();
+  const astRef = useRef(state.ast);
+
+  // Keep AST ref updated for efficient access
+  useEffect(() => {
+    astRef.current = state.ast;
+  }, [state.ast]);
 
   useEffect(() => {
     // Listen for messages from extension
@@ -90,6 +97,34 @@ function App() {
             ...prev,
             config: message.payload
           }));
+          break;
+          
+        case 'cursorPositionChanged':
+          // Find the AST node at the cursor position
+          if (astRef.current && Array.isArray(astRef.current)) {
+            const position = message.payload;
+            console.log('Cursor position changed:', position);
+            const node = searchNodeWithMatchedPosition(astRef.current, position);
+            
+            if (node) {
+              console.log('Found node at position:', node);
+              setState(prev => ({ ...prev, selectedNode: node }));
+              
+              // Update namespace
+              const namespace = findNodeNameSpace(node, { data: astRef.current }, ['data']);
+              if (namespace) {
+                setState(prev => ({ ...prev, currentNamespace: namespace }));
+              }
+            } else {
+              console.log('No node found at position');
+              // Clear selection if no node found at position
+              setState(prev => ({ 
+                ...prev, 
+                selectedNode: undefined,
+                currentNamespace: []
+              }));
+            }
+          }
           break;
       }
     };
@@ -130,6 +165,7 @@ function App() {
 
   const handleToggleView = () => {
     const newMode = state.viewMode === 'tree' ? 'json' : 'tree';
+    console.log('Toggling view mode to:', newMode);
     setState(prev => ({ ...prev, viewMode: newMode }));
     
     vscode?.postMessage({
@@ -144,6 +180,11 @@ function App() {
       payload: text
     });
   };
+  
+  // Debug logging for view mode and selected node
+  useEffect(() => {
+    console.log('Rendering view mode:', state.viewMode, 'with selectedNode:', state.selectedNode);
+  }, [state.viewMode, state.selectedNode]);
 
   if (!state.ast) {
     return (

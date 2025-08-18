@@ -338,6 +338,25 @@ export class WebviewProvider {
         return this.panel !== undefined && this.panel.visible;
     }
 
+    public isSourceDocument(document: vscode.TextDocument): boolean {
+        if (!this.sourceUri) {
+            return false;
+        }
+        return document.uri.toString() === this.sourceUri.toString();
+    }
+
+    public highlightNodeAtPosition(position: { position: number; lineNumber: number; column: number }) {
+        if (!this.panel) {
+            return;
+        }
+
+        // Send position to webview to find and highlight the corresponding AST node
+        this.panel.webview.postMessage({
+            type: 'cursorPositionChanged',
+            payload: position
+        });
+    }
+
     private async getWebviewContent(code: string, ast: any): Promise<string> {
         const scriptUri = this.panel?.webview.asWebviewUri(
             vscode.Uri.file(path.join(this.context.extensionPath, 'out', 'webview', 'app.js'))

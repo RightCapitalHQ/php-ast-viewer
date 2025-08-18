@@ -2,7 +2,7 @@
   "name": "php-ast-viewer",
   "displayName": "PHP AST Viewer",
   "description": "Visualize PHP Abstract Syntax Tree (AST) in VS Code",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "rightcapital",
   "engines": {
     "vscode": "^1.85.0"
@@ -35,7 +35,7 @@
   "license": "MIT",
   "main": "./out/extension.js",
   "activationEvents": [
-    "*"
+    "onLanguage:php"
   ],
   "contributes": {
     "commands": [

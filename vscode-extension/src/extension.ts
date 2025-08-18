@@ -10,11 +10,9 @@ let parserService: ParserService | undefined;
 export function activate(context: vscode.ExtensionContext) {
     console.log('PHP AST Viewer extension is now active!');
     
-    // Show activation message
-    vscode.window.showInformationMessage('PHP AST Viewer extension activated successfully!');
-
     // Initialize services
     parserService = new ParserService();
+    
     webviewProvider = new WebviewProvider(context, parserService);
     treeDataProvider = new AstTreeDataProvider(parserService);
 
@@ -119,6 +117,29 @@ export function activate(context: vscode.ExtensionContext) {
         if (event.affectsConfiguration('phpAstViewer')) {
             webviewProvider?.updateConfiguration();
         }
+    }, null, context.subscriptions);
+
+    // Listen to cursor position changes for editor-to-AST synchronization
+    let cursorChangeTimeout: NodeJS.Timeout | undefined;
+    vscode.window.onDidChangeTextEditorSelection((event) => {
+        // Clear previous timeout to debounce
+        if (cursorChangeTimeout) {
+            clearTimeout(cursorChangeTimeout);
+        }
+
+        // Debounce cursor changes to avoid excessive updates
+        cursorChangeTimeout = setTimeout(() => {
+            if (webviewProvider?.isWebviewVisible() && webviewProvider.isSourceDocument(event.textEditor.document)) {
+                const position = event.selections[0].active;
+                const offset = event.textEditor.document.offsetAt(position);
+                
+                webviewProvider.highlightNodeAtPosition({
+                    position: offset,
+                    lineNumber: position.line + 1, // VS Code uses 0-based lines
+                    column: position.character
+                });
+            }
+        }, 100); // 100ms debounce
     }, null, context.subscriptions);
 }
 

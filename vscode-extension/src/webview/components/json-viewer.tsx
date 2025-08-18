@@ -15,6 +15,19 @@ interface JsonViewerProps {
   expandDepth: number;
 }
 
+// Check if two nodes are the same based on attributes
+function isSameNode(node1: any, node2: any): boolean {
+  if (!node1 || !node2) return false;
+  if (!node1.attributes || !node2.attributes) return false;
+  
+  return (
+    node1.attributes.startFilePos === node2.attributes.startFilePos &&
+    node1.attributes.endFilePos === node2.attributes.endFilePos &&
+    node1.attributes.startLine === node2.attributes.startLine &&
+    node1.attributes.endLine === node2.attributes.endLine
+  );
+}
+
 export function JsonViewer(props: JsonViewerProps) {
   const {
     data,
@@ -34,17 +47,51 @@ export function JsonViewer(props: JsonViewerProps) {
   const isDarkMode = document.body.className.includes('vscode-dark') || 
                      document.body.className.includes('vscode-high-contrast');
 
+  // When selectedNode changes from external source (editor click), find and expand its path
+  useLayoutEffect(() => {
+    if (selectedNode && data) {
+      // Find the namespace path to this node by traversing the data
+      const findNamespace = (node: any, target: INode, path: (string | number)[] = []): (string | number)[] | null => {
+        if (node === target || (node && target && isSameNode(node, target))) {
+          return path;
+        }
+        
+        if (node && typeof node === 'object') {
+          for (const [key, value] of Object.entries(node)) {
+            const result = findNamespace(value, target, [...path, key]);
+            if (result) return result;
+          }
+        }
+        
+        if (Array.isArray(node)) {
+          for (let i = 0; i < node.length; i++) {
+            const result = findNamespace(node[i], target, [...path, i]);
+            if (result) return result;
+          }
+        }
+        
+        return null;
+      };
+      
+      const namespace = findNamespace(data, selectedNode, ['root']);
+      if (namespace) {
+        setCurrentNamespace(namespace.map(String));
+      }
+    }
+  }, [selectedNode, data]);
+
+  // Highlight and scroll to the selected element
   useLayoutEffect(() => {
     currentHighlightNode?.classList.remove('selected');
     const jsonViewer = document.getElementById('json-viewer');
-    const selectedElement = document.getElementById(currentNamespace.join('-'));
+    const selectedNode = document.getElementById(currentNamespace.join('-'));
 
-    if (jsonViewer && selectedElement) {
-      setCurrentHighlightNode(selectedElement);
-      selectedElement?.classList.add('selected');
-      selectedElement.scrollIntoView({ block: 'start', inline: 'start' });
+    if (jsonViewer && selectedNode) {
+      setCurrentHighlightNode(selectedNode);
+      selectedNode?.classList.add('selected');
+      selectedNode.scrollIntoView({ block: 'start', inline: 'start' });
     }
-  }, [currentNamespace, currentHighlightNode]);
+  }, [currentNamespace]);
 
   const handleSelect = (props: OnSelectProps) => {
     const namespace = props.namespace as (string | number)[];
@@ -88,6 +135,7 @@ export function JsonViewer(props: JsonViewerProps) {
         displayDataTypes={false}
         theme={isDarkMode ? 'tomorrow' : 'rjv-default'}
         collapsed={expandDepth}
+        forceCalculateShouldCollapseOnNamespaceUpdate={currentNamespace}
         shouldCollapse={(field: CollapsedFieldProps) => {
           // Keep expanded if it's part of the current selection path
           if (currentNamespace.join('-').startsWith(field.namespace.join('-'))) {
