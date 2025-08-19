@@ -114,14 +114,61 @@ body {
 }
 
 .ant-layout {
-  background: transparent;
+  background: var(--vscode-editor-background);
 }
 
 .ant-layout-content {
-  background: transparent;
+  background: var(--vscode-editor-background);
 }
 
 /* Loading spinner */
 .ant-spin-spinning {
   color: var(--vscode-progressBar-background);
+}
+
+/* Ensure all text elements use VSCode colors */
+.ant-typography {
+  color: var(--vscode-foreground) !important;
+}
+
+.ant-tree .ant-tree-node-content-wrapper {
+  color: var(--vscode-foreground);
+}
+
+.ant-tree .ant-tree-node-content-wrapper:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background-color: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+/* JSON Viewer text colors */
+.react-json-view {
+  background-color: var(--vscode-editor-background) !important;
+}
+
+.react-json-view .object-key-val {
+  color: var(--vscode-foreground) !important;
+}
+
+/* Button overrides */
+.ant-btn-default {
+  background-color: var(--vscode-button-secondaryBackground);
+  border-color: var(--vscode-button-border);
+  color: var(--vscode-button-secondaryForeground);
+}
+
+.ant-btn-default:hover {
+  background-color: var(--vscode-button-secondaryHoverBackground);
+  border-color: var(--vscode-button-border);
+  color: var(--vscode-button-secondaryForeground);
+}
+
+/* Select dropdown */
+.ant-select-selector {
+  background-color: var(--vscode-input-background) !important;
+  border-color: var(--vscode-input-border) !important;
+  color: var(--vscode-input-foreground) !important;
 }

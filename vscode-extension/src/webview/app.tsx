@@ -267,6 +267,11 @@ function App() {
         algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
           colorPrimary: '#007ACC',
+          colorBgContainer: 'var(--vscode-editor-background)',
+          colorBgElevated: 'var(--vscode-dropdown-background)',
+          colorBorder: 'var(--vscode-panel-border)',
+          colorText: 'var(--vscode-foreground)',
+          colorTextSecondary: 'var(--vscode-descriptionForeground)',
         }
       }}
     >
@@ -295,7 +300,7 @@ function App() {
           )}
         </div>
         
-        <Content className="overflow-auto p-4" style={{ backgroundColor: token.colorBgContainer }}>
+        <Content className="overflow-auto p-4">
           <Spin spinning={state.isParsing}>
             {state.viewMode === 'json' ? (
               <JsonViewer
