@@ -20,12 +20,21 @@ export class WebviewProvider {
     }
 
     public async showWebview(code: string, fileName: string) {
-        const columnToShowIn = vscode.window.activeTextEditor
-            ? vscode.window.activeTextEditor.viewColumn
-            : undefined;
+        const activeEditor = vscode.window.activeTextEditor;
+        
+        // Determine the target column for the webview
+        let targetColumn: vscode.ViewColumn;
+        if (activeEditor?.viewColumn) {
+            // Try to place webview beside the active editor
+            targetColumn = activeEditor.viewColumn === vscode.ViewColumn.One 
+                ? vscode.ViewColumn.Two 
+                : vscode.ViewColumn.Beside;
+        } else {
+            // Fallback to column Two
+            targetColumn = vscode.ViewColumn.Two;
+        }
 
         // Store source document information
-        const activeEditor = vscode.window.activeTextEditor;
         if (activeEditor && activeEditor.document.fileName === fileName) {
             this.sourceUri = activeEditor.document.uri;
             this.sourceContent = code;
@@ -38,14 +47,14 @@ export class WebviewProvider {
         }
 
         if (this.panel) {
-            // If panel exists, reveal it
-            this.panel.reveal(columnToShowIn);
+            // If panel exists, reveal it in the target column
+            this.panel.reveal(targetColumn);
         } else {
-            // Create new panel
+            // Create new panel in the target column
             this.panel = vscode.window.createWebviewPanel(
                 'phpAstViewer',
                 `PHP AST: ${path.basename(fileName)}`,
-                vscode.ViewColumn.Two,
+                targetColumn,
                 {
                     enableScripts: true,
                     retainContextWhenHidden: true,
@@ -77,6 +86,9 @@ export class WebviewProvider {
             );
         }
 
+        // Update panel title to reflect current file
+        this.panel.title = `PHP AST: ${path.basename(fileName)}`;
+        
         // Update content
         this.updateContent(code).catch(err => {
             vscode.window.showErrorMessage(`Failed to parse PHP: ${err.message}`);
