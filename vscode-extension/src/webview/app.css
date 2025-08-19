@@ -14,7 +14,8 @@ body {
 
 #root {
   height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Utility classes */
@@ -84,6 +85,8 @@ body {
 
 .overflow-auto {
   overflow: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 /* Scrollbar styling */

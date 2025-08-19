@@ -9,6 +9,7 @@ interface TreeViewerProps {
   selectedNode?: INode;
   onSelectNode: (node: INode) => void;
   onNamespaceChange?: (namespace: string[]) => void;
+  isDarkMode?: boolean;
 }
 
 function forEachChild(node: INode) {
@@ -48,7 +49,7 @@ function isSameNode(target: INode | undefined, current: INode | undefined): bool
 }
 
 export function TreeViewer(props: TreeViewerProps) {
-  const { data, selectedNode, onSelectNode } = props;
+  const { data, selectedNode, onSelectNode, isDarkMode } = props;
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [forceUpdate, setForceUpdate] = useState(0);
   let i = 0;

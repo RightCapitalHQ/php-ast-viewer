@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ConfigProvider, theme, Layout, Button, Spin, message } from 'antd';
+import { ConfigProvider, theme, Layout, Button, Spin, message, Select } from 'antd';
 import { TreeViewer } from './components/tree-viewer';
 import { JsonViewer } from './components/json-viewer';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
@@ -20,6 +20,7 @@ declare global {
         expandDepth: number;
         enableClipboard: boolean;
         alwaysCollapseFields: string[];
+        theme?: 'auto' | 'light' | 'dark';
       };
       vscode: any;
     };
@@ -37,13 +38,22 @@ interface AppState {
     expandDepth: number;
     enableClipboard: boolean;
     alwaysCollapseFields: string[];
+    theme?: 'auto' | 'light' | 'dark';
   };
 }
 
 function App() {
   const vscode = window.initialData?.vscode;
+  const [themeMode, setThemeMode] = useState<'auto' | 'light' | 'dark'>(
+    window.initialData?.config?.theme || 'auto'
+  );
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Detect VSCode theme
+    // If theme is not auto, use the specified theme
+    const theme = window.initialData?.config?.theme || 'auto';
+    if (theme !== 'auto') {
+      return theme === 'dark';
+    }
+    // Otherwise detect VSCode theme
     const bodyClasses = document.body.className;
     return bodyClasses.includes('vscode-dark') || bodyClasses.includes('vscode-high-contrast');
   });
@@ -58,7 +68,8 @@ function App() {
     config: {
       expandDepth: window.initialData?.config?.expandDepth || 3,
       enableClipboard: window.initialData?.config?.enableClipboard || false,
-      alwaysCollapseFields: window.initialData?.config?.alwaysCollapseFields || ['attributes']
+      alwaysCollapseFields: window.initialData?.config?.alwaysCollapseFields || ['attributes'],
+      theme: window.initialData?.config?.theme || 'auto'
     }
   });
 
@@ -97,6 +108,18 @@ function App() {
             ...prev,
             config: message.payload
           }));
+          // Update theme if changed
+          if (message.payload.theme) {
+            setThemeMode(message.payload.theme);
+            if (message.payload.theme !== 'auto') {
+              setIsDarkMode(message.payload.theme === 'dark');
+            } else {
+              // Re-detect VSCode theme
+              const bodyClasses = document.body.className;
+              const isDark = bodyClasses.includes('vscode-dark') || bodyClasses.includes('vscode-high-contrast');
+              setIsDarkMode(isDark);
+            }
+          }
           break;
           
         case 'cursorPositionChanged':
@@ -134,11 +157,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Observe VSCode theme changes
+    // Observe VSCode theme changes only when in auto mode
     const observer = new MutationObserver(() => {
-      const bodyClasses = document.body.className;
-      const isDark = bodyClasses.includes('vscode-dark') || bodyClasses.includes('vscode-high-contrast');
-      setIsDarkMode(isDark);
+      if (themeMode === 'auto') {
+        const bodyClasses = document.body.className;
+        const isDark = bodyClasses.includes('vscode-dark') || bodyClasses.includes('vscode-high-contrast');
+        setIsDarkMode(isDark);
+      }
     });
 
     observer.observe(document.body, {
@@ -147,7 +172,7 @@ function App() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [themeMode]);
 
   const handleNodeSelect = (node: INode) => {
     setState(prev => ({ ...prev, selectedNode: node }));
@@ -178,6 +203,30 @@ function App() {
     vscode?.postMessage({
       type: 'copyToClipboard',
       payload: text
+    });
+  };
+
+  const handleThemeChange = (value: 'auto' | 'light' | 'dark') => {
+    setThemeMode(value);
+    setState(prev => ({
+      ...prev,
+      config: { ...prev.config, theme: value }
+    }));
+    
+    // Update isDarkMode based on theme selection
+    if (value !== 'auto') {
+      setIsDarkMode(value === 'dark');
+    } else {
+      // Re-detect VSCode theme
+      const bodyClasses = document.body.className;
+      const isDark = bodyClasses.includes('vscode-dark') || bodyClasses.includes('vscode-high-contrast');
+      setIsDarkMode(isDark);
+    }
+    
+    // Save theme preference
+    vscode?.postMessage({
+      type: 'updateTheme',
+      payload: value
     });
   };
   
@@ -227,6 +276,17 @@ function App() {
             <Button size="small" onClick={handleToggleView}>
               {state.viewMode === 'json' ? 'Tree View' : 'JSON View'}
             </Button>
+            <Select
+              size="small"
+              value={themeMode}
+              onChange={handleThemeChange}
+              style={{ width: 120 }}
+              options={[
+                { value: 'auto', label: 'Auto (System)' },
+                { value: 'light', label: 'Light' },
+                { value: 'dark', label: 'Dark' }
+              ]}
+            />
           </div>
           {state.currentNamespace.length > 0 && (
             <div className="text-sm opacity-60">
@@ -244,6 +304,7 @@ function App() {
                 expandDepth={state.config.expandDepth}
                 alwaysCollapseFieldNames={state.config.alwaysCollapseFields}
                 enableClipboard={state.config.enableClipboard}
+                isDarkMode={isDarkMode}
                 onSelect={handleNodeSelect}
                 onNamespaceChange={handleNamespaceChange}
                 onCopyToClipboard={handleCopyToClipboard}
@@ -252,6 +313,7 @@ function App() {
               <TreeViewer
                 data={state.ast}
                 selectedNode={state.selectedNode}
+                isDarkMode={isDarkMode}
                 onSelectNode={handleNodeSelect}
                 onNamespaceChange={handleNamespaceChange}
               />

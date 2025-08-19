@@ -151,6 +151,16 @@
             "attributes"
           ],
           "description": "Fields to always collapse in JSON view"
+        },
+        "phpAstViewer.theme": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ],
+          "default": "auto",
+          "description": "Theme for the AST viewer (auto follows VSCode theme)"
         }
       }
     }

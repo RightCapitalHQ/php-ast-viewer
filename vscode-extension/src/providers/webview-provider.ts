@@ -125,7 +125,8 @@ export class WebviewProvider {
                     defaultView: config.get('defaultView'),
                     expandDepth: config.get('expandDepth'),
                     enableClipboard: config.get('enableClipboard'),
-                    alwaysCollapseFields: config.get('alwaysCollapseFields')
+                    alwaysCollapseFields: config.get('alwaysCollapseFields'),
+                    theme: config.get('theme')
                 }
             }
         });
@@ -148,6 +149,11 @@ export class WebviewProvider {
             case 'copyToClipboard':
                 vscode.env.clipboard.writeText(message.payload);
                 vscode.window.showInformationMessage('Copied to clipboard');
+                break;
+            case 'updateTheme':
+                // Save theme preference to settings
+                const config = vscode.workspace.getConfiguration('phpAstViewer');
+                config.update('theme', message.payload, vscode.ConfigurationTarget.Global);
                 break;
         }
     }

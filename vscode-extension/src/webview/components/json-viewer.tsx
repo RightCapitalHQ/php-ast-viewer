@@ -13,6 +13,7 @@ interface JsonViewerProps {
   enableClipboard: boolean;
   alwaysCollapseFieldNames: string[];
   expandDepth: number;
+  isDarkMode?: boolean;
 }
 
 // Check if two nodes are the same based on attributes
@@ -38,14 +39,17 @@ export function JsonViewer(props: JsonViewerProps) {
     enableClipboard,
     alwaysCollapseFieldNames,
     expandDepth,
+    isDarkMode: isDarkModeProp,
   } = props;
 
   const [currentHighlightNode, setCurrentHighlightNode] = useState<HTMLElement | null>(null);
   const [currentNamespace, setCurrentNamespace] = useState<string[]>([]);
 
-  // Detect VSCode theme
-  const isDarkMode = document.body.className.includes('vscode-dark') || 
-                     document.body.className.includes('vscode-high-contrast');
+  // Use prop if provided, otherwise detect VSCode theme
+  const isDarkMode = isDarkModeProp !== undefined 
+    ? isDarkModeProp 
+    : (document.body.className.includes('vscode-dark') || 
+       document.body.className.includes('vscode-high-contrast'));
 
   // When selectedNode changes from external source (editor click), find and expand its path
   useLayoutEffect(() => {
@@ -89,7 +93,11 @@ export function JsonViewer(props: JsonViewerProps) {
     if (jsonViewer && selectedNode) {
       setCurrentHighlightNode(selectedNode);
       selectedNode?.classList.add('selected');
-      selectedNode.scrollIntoView({ block: 'start', inline: 'start' });
+      selectedNode.scrollIntoView({ 
+        block: 'center', 
+        inline: 'nearest',
+        behavior: 'smooth'
+      });
     }
   }, [currentNamespace]);
 
