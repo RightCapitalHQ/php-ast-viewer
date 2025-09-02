@@ -1,3 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for Theme System */
+:root {
+  /* Light theme variables */
+  --bg-primary: 255 255 255;
+  --bg-secondary: 248 249 250;
+  --bg-elevated: 255 255 255;
+  
+  --fg-primary: 26 26 26;
+  --fg-secondary: 107 114 128;
+  --fg-muted: 156 163 175;
+  
+  --border-default: 229 231 235;
+  --border-muted: 243 244 246;
+  
+  --color-primary: 59 130 246;
+  --color-primary-hover: 37 99 235;
+  --color-primary-active: 29 78 216;
+  
+  --color-success: 16 185 129;
+  --color-warning: 245 158 11;
+  --color-error: 239 68 68;
+  
+  /* Component specific colors */
+  --tabs-bg: 248 249 250;
+  --tabs-active-bg: 255 255 255;
+  --tabs-active-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  
+  --switch-bg: 229 231 235;
+  --switch-active-bg: 59 130 246;
+}
+
+.dark {
+  /* Dark theme variables */
+  --bg-primary: 15 15 15;
+  --bg-secondary: 26 26 26;
+  --bg-elevated: 38 38 38;
+  
+  --fg-primary: 255 255 255;
+  --fg-secondary: 209 213 219;
+  --fg-muted: 156 163 175;
+  
+  --border-default: 55 65 81;
+  --border-muted: 31 41 55;
+  
+  --color-primary: 96 165 250;
+  --color-primary-hover: 59 130 246;
+  --color-primary-active: 37 99 235;
+  
+  --color-success: 52 211 153;
+  --color-warning: 251 191 36;
+  --color-error: 248 113 113;
+  
+  /* Component specific colors */
+  --tabs-bg: 26 26 26;
+  --tabs-active-bg: 38 38 38;
+  --tabs-active-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  
+  --switch-bg: 55 65 81;
+  --switch-active-bg: 96 165 250;
+}
+
 /* Reset and base styles */
 * {
   margin: 0;
@@ -6,169 +71,351 @@
 }
 
 body {
-  font-family: var(--vscode-font-family);
-  font-size: var(--vscode-font-size);
-  color: var(--vscode-foreground);
-  background-color: var(--vscode-editor-background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--fg-primary));
+  background-color: rgb(var(--bg-primary));
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #root {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: rgb(var(--bg-primary));
 }
 
-/* Utility classes */
-.h-screen {
-  height: 100vh;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.p-2 {
-  padding: 0.5rem;
-}
-
-.p-4 {
-  padding: 1rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.border-b {
-  border-bottom: 1px solid;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-}
-
-.text-red-500 {
-  color: var(--vscode-errorForeground);
-}
-
-.opacity-60 {
-  opacity: 0.6;
-}
-
-.overflow-auto {
-  overflow: auto;
-  flex: 1;
-  min-height: 0;
-}
-
-/* Scrollbar styling */
+/* Scrollbar styling for both themes */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--vscode-scrollbarSlider-background);
+  background: rgb(var(--bg-secondary));
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--vscode-scrollbarSlider-hoverBackground);
-  border-radius: 5px;
+  background: rgb(var(--fg-muted));
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--vscode-scrollbarSlider-activeBackground);
+  background: rgb(var(--fg-secondary));
 }
 
-/* Ant Design overrides for VSCode theme */
-.ant-btn {
-  font-family: var(--vscode-font-family);
+/* Custom Tab Styles */
+.custom-tabs-list {
+  background-color: rgb(var(--tabs-bg));
+  border: 1px solid rgb(var(--border-default));
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+  display: grid;
+  transition: all 0.2s ease;
 }
 
+.custom-tab-trigger {
+  background-color: transparent;
+  color: rgb(var(--fg-secondary));
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-weight: 500;
+  font-size: 12px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.custom-tab-trigger:hover {
+  background-color: rgb(var(--bg-elevated) / 0.5);
+  color: rgb(var(--fg-primary));
+}
+
+.custom-tab-trigger[data-state="active"] {
+  background-color: rgb(var(--tabs-active-bg));
+  color: rgb(var(--fg-primary));
+  box-shadow: var(--tabs-active-shadow);
+  border: 1px solid rgb(var(--border-default));
+}
+
+/* Header Layout Styles */
+.header-container {
+  background: rgb(var(--bg-primary));
+  border-bottom: 1px solid rgb(var(--border-default));
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.dark .header-container {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.header-row.first {
+  border-bottom: 1px solid rgb(var(--border-muted));
+  margin-bottom: 2px;
+  padding-bottom: 6px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Theme Toggle Group Styles */
+.theme-toggle-group {
+  background-color: rgb(var(--bg-secondary));
+  border: 1px solid rgb(var(--border-default));
+  border-radius: 6px;
+  padding: 2px;
+  display: flex;
+  gap: 2px;
+}
+
+.theme-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  background: transparent;
+  color: rgb(var(--fg-secondary));
+  border: none;
+  min-width: 58px;
+  justify-content: center;
+}
+
+.theme-toggle-item:hover {
+  background-color: rgb(var(--bg-elevated));
+  color: rgb(var(--fg-primary));
+}
+
+.theme-toggle-item[data-state="on"] {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--color-primary));
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.1);
+  border: 1px solid rgb(var(--border-default));
+}
+
+.theme-toggle-icon {
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .header-container {
+    padding: 8px 12px;
+  }
+  
+  .header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .header-left {
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .header-right {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  
+  .custom-tabs-list {
+    width: auto;
+    min-width: 140px;
+  }
+  
+  .theme-toggle-group {
+    width: auto;
+    min-width: 120px;
+  }
+}
+
+/* Additional visual enhancements */
+.header-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgb(var(--border-default)) 20%, 
+    rgb(var(--border-default)) 80%, 
+    transparent 100%
+  );
+}
+
+.header-container {
+  position: relative;
+}
+
+/* Improve focus states */
+.theme-toggle-item:focus-visible {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+}
+
+.custom-tab-trigger:focus-visible {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+}
+
+/* Ant Design Component Overrides */
 .ant-layout {
-  background: var(--vscode-editor-background);
+  background: rgb(var(--bg-primary)) !important;
+  transition: background-color 0.2s ease;
 }
 
 .ant-layout-content {
-  background: var(--vscode-editor-background);
+  background: rgb(var(--bg-primary)) !important;
+  transition: background-color 0.2s ease;
 }
 
-/* Loading spinner */
 .ant-spin-spinning {
-  color: var(--vscode-progressBar-background);
+  color: rgb(var(--color-primary)) !important;
 }
 
-/* Ensure all text elements use VSCode colors */
-.ant-typography {
-  color: var(--vscode-foreground) !important;
+.ant-switch {
+  background-color: rgb(var(--switch-bg)) !important;
+  border: none !important;
 }
 
-.ant-tree .ant-tree-node-content-wrapper {
-  color: var(--vscode-foreground);
+.ant-switch-checked {
+  background-color: rgb(var(--switch-active-bg)) !important;
 }
 
-.ant-tree .ant-tree-node-content-wrapper:hover {
-  background-color: var(--vscode-list-hoverBackground);
+.ant-switch:focus {
+  box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.2) !important;
 }
 
-.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
-  background-color: var(--vscode-list-activeSelectionBackground);
-  color: var(--vscode-list-activeSelectionForeground);
+/* Error states */
+.error-text {
+  color: rgb(var(--color-error));
 }
 
-/* JSON Viewer text colors */
+/* JSON Viewer Overrides */
 .react-json-view {
-  background-color: var(--vscode-editor-background) !important;
+  background-color: rgb(var(--bg-primary)) !important;
+  padding: 16px;
+  border-radius: 8px;
 }
 
 .react-json-view .object-key-val {
-  color: var(--vscode-foreground) !important;
+  color: rgb(var(--fg-primary)) !important;
 }
 
-/* Button overrides */
-.ant-btn-default {
-  background-color: var(--vscode-button-secondaryBackground);
-  border-color: var(--vscode-button-border);
-  color: var(--vscode-button-secondaryForeground);
+.react-json-view .string-value {
+  color: rgb(var(--color-success)) !important;
 }
 
-.ant-btn-default:hover {
-  background-color: var(--vscode-button-secondaryHoverBackground);
-  border-color: var(--vscode-button-border);
-  color: var(--vscode-button-secondaryForeground);
+.react-json-view .number-value {
+  color: rgb(var(--color-primary)) !important;
 }
 
-/* Select dropdown */
-.ant-select-selector {
-  background-color: var(--vscode-input-background) !important;
-  border-color: var(--vscode-input-border) !important;
-  color: var(--vscode-input-foreground) !important;
+.react-json-view .boolean-value {
+  color: rgb(var(--color-warning)) !important;
+}
+
+.react-json-view .null-value {
+  color: rgb(var(--fg-muted)) !important;
+}
+
+/* Tree Viewer Overrides */
+.ant-tree {
+  background: transparent !important;
+  color: rgb(var(--fg-primary)) !important;
+}
+
+.ant-tree .ant-tree-node-content-wrapper {
+  color: rgb(var(--fg-primary)) !important;
+  transition: background-color 0.15s ease;
+}
+
+.ant-tree .ant-tree-node-content-wrapper:hover {
+  background-color: rgb(var(--bg-secondary)) !important;
+}
+
+.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background-color: rgb(var(--color-primary) / 0.1) !important;
+  color: rgb(var(--color-primary)) !important;
+  border-radius: 4px;
+}
+
+.ant-tree .ant-tree-switcher {
+  color: rgb(var(--fg-secondary)) !important;
+}
+
+/* Namespace breadcrumb */
+.namespace-breadcrumb {
+  color: rgb(var(--fg-secondary));
+  font-size: 11px;
+  font-weight: 400;
+  padding: 2px 0;
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  letter-spacing: 0.025em;
+  transition: all 0.2s ease;
+}
+
+.namespace-breadcrumb:hover {
+  color: rgb(var(--fg-primary));
+}
+
+/* Utility classes */
+.transition-theme {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Loading states */
+.loading-spinner {
+  color: rgb(var(--color-primary));
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Focus states */
+*:focus {
+  outline: 2px solid rgb(var(--color-primary) / 0.5);
+  outline-offset: 2px;
+}
+
+/* Selection styles */
+::selection {
+  background-color: rgb(var(--color-primary) / 0.2);
 }

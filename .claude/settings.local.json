@@ -12,7 +12,9 @@
       "Bash(npx vsce package:*)",
       "Bash(npx vsce ls:*)",
       "Bash(php:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(pnpm run:*)",
+      "Bash(npx tailwindcss init:*)"
     ],
     "deny": []
   }

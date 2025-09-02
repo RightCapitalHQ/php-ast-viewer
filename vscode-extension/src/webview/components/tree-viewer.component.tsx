@@ -122,16 +122,39 @@ export function TreeViewer(props: TreeViewerProps) {
     return <div>No tree data available</div>;
   }
 
-  function handleNodeClick(node: INode) {
+  function handleNodeClick(node: INode, event?: React.MouseEvent) {
+    console.log('Tree Viewer: Node clicked:', {
+      nodeType: (node as any).nodeType || (node as any).kind,
+      attributes: node.attributes,
+      hasValidPosition: node && node.attributes && 
+                       (node.attributes.startFilePos !== undefined || 
+                        node.attributes.startLine !== undefined)
+    });
+    
+    // Prevent event bubbling to avoid interference with TreeView's onClick
+    if (event) {
+      event.stopPropagation();
+    }
+    
     const hasValidPosition = node && node.attributes && 
                            (node.attributes.startFilePos !== undefined || 
                             node.attributes.startLine !== undefined);
     if (hasValidPosition) {
+      console.log('Tree Viewer: Selecting node with valid position');
       onSelectNode(node);
+    } else {
+      console.log('Tree Viewer: Node has no valid position, not selecting');
     }
   }
 
-  function handleToggleExpand(node: INode) {
+  function handleToggleExpand(node: INode, event?: React.MouseEvent) {
+    console.log('Tree Viewer: Toggling expansion for node:', (node as any).nodeType || (node as any).kind);
+    
+    // Prevent event bubbling
+    if (event) {
+      event.stopPropagation();
+    }
+    
     const nodeKey = getNodeKey(node);
     setExpandedNodes(prev => {
       const newSet = new Set(prev);
@@ -161,7 +184,7 @@ export function TreeViewer(props: TreeViewerProps) {
     
     const label = (
       <div 
-        onClick={() => handleNodeClick(node)} 
+        onClick={(e) => handleNodeClick(node, e)} 
         className={className + (hasValidPosition ? ' clickable' : '')}
         title={hasValidPosition ? 'Click to highlight in editor' : ''}
         data-node-key={nodeKey}
@@ -183,7 +206,7 @@ export function TreeViewer(props: TreeViewerProps) {
         <TreeView 
           nodeLabel={label}
           collapsed={!isExpanded}
-          onClick={() => handleToggleExpand(node)}
+          onClick={(e) => handleToggleExpand(node, e)}
         >
           {children.map((n) => renderNode(n, getChildren, depth + 1))}
         </TreeView>

@@ -31,6 +31,7 @@ A powerful Visual Studio Code extension that visualizes the Abstract Syntax Tree
 ### Context Menu
 
 Right-click in a PHP file to access:
+
 - Parse Selection (when text is selected)
 - View PHP AST
 
@@ -44,10 +45,10 @@ Configure the extension in VSCode settings:
 
 ```json
 {
-  "phpAstViewer.autoPrependPhpTag": true,           // Auto-add <?php if missing
-  "phpAstViewer.defaultView": "json",               // Default view: "tree" or "json"
-  "phpAstViewer.expandDepth": 3,                    // Default expand depth (0-10)
-  "phpAstViewer.enableClipboard": false,            // Enable clipboard in JSON view
+  "phpAstViewer.autoPrependPhpTag": true, // Auto-add <?php if missing
+  "phpAstViewer.defaultView": "json", // Default view: "tree" or "json"
+  "phpAstViewer.expandDepth": 3, // Default expand depth (0-10)
+  "phpAstViewer.enableClipboard": false, // Enable clipboard in JSON view
   "phpAstViewer.alwaysCollapseFields": ["attributes"] // Fields to always collapse
 }
 ```
@@ -62,16 +63,19 @@ Configure the extension in VSCode settings:
 ## Features in Detail
 
 ### Tree View
+
 - Hierarchical representation of AST nodes
 - Expandable/collapsible nodes
 - Click to highlight source code
 
 ### JSON View
+
 - Raw AST data in JSON format
 - Search and filter capabilities
 - Copy to clipboard support
 
 ### Code Highlighting
+
 - Clicking AST nodes highlights corresponding code
 - Bidirectional navigation between code and AST
 - Automatic scroll to selection
@@ -85,11 +89,11 @@ Configure the extension in VSCode settings:
 
 This extension contributes the following settings:
 
-* `phpAstViewer.autoPrependPhpTag`: Automatically prepend `<?php` tag if missing
-* `phpAstViewer.defaultView`: Default visualization mode (tree/json)
-* `phpAstViewer.expandDepth`: Default expansion depth for AST nodes
-* `phpAstViewer.enableClipboard`: Enable clipboard functionality
-* `phpAstViewer.alwaysCollapseFields`: Fields to always collapse in view
+- `phpAstViewer.autoPrependPhpTag`: Automatically prepend `<?php` tag if missing
+- `phpAstViewer.defaultView`: Default visualization mode (tree/json)
+- `phpAstViewer.expandDepth`: Default expansion depth for AST nodes
+- `phpAstViewer.enableClipboard`: Enable clipboard functionality
+- `phpAstViewer.alwaysCollapseFields`: Fields to always collapse in view
 
 ## Known Issues
 
@@ -99,6 +103,7 @@ This extension contributes the following settings:
 ## Contributing
 
 Contributions are welcome! Please visit our [GitHub repository](https://github.com/RightCapitalHQ/php-ast-viewer) to:
+
 - Report issues
 - Submit pull requests
 - Suggest features
@@ -110,6 +115,7 @@ MIT License - see [LICENSE](https://github.com/RightCapitalHQ/php-ast-viewer/blo
 ## Credits
 
 Built with ❤️ by [RightCapital](https://rightcapital.com) using:
+
 - [@rightcapital/php-parser](https://www.npmjs.com/package/@rightcapital/php-parser) - PHP parsing in JavaScript
 - [React](https://reactjs.org/) & [Ant Design](https://ant.design/) - UI components
 - [Vite](https://vitejs.dev/) - Build tooling
@@ -117,6 +123,7 @@ Built with ❤️ by [RightCapital](https://rightcapital.com) using:
 ## Changelog
 
 ### 0.0.1
+
 - Initial release
 - Tree and JSON view modes
 - Code highlighting

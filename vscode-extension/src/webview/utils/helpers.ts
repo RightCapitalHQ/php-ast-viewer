@@ -53,21 +53,51 @@ export function searchNodeWithMatchedPosition(
 }
 
 export function isSameNode(target: INode, current: INode) {
-  return _.isEqual(target.attributes, current.attributes);
+  if (!target || !current) return false;
+  if (!target.attributes || !current.attributes) return false;
+
+  // Use more specific comparison to avoid false matches
+  const targetAttrs = target.attributes;
+  const currentAttrs = current.attributes;
+
+  // Compare position attributes first (most specific)
+  const positionMatch = 
+    targetAttrs.startFilePos === currentAttrs.startFilePos &&
+    targetAttrs.endFilePos === currentAttrs.endFilePos &&
+    targetAttrs.startLine === currentAttrs.startLine &&
+    targetAttrs.endLine === currentAttrs.endLine;
+
+  if (!positionMatch) return false;
+
+  // Also compare node types as additional verification
+  const targetType = (target as any).nodeType || (target as any).kind;
+  const currentType = (current as any).nodeType || (current as any).kind;
+  
+  return targetType === currentType;
 }
 
 export function findNodeNameSpace(target: INode, current: any, namespace = ['root']): string[] | undefined {
-  if (isSameNode(target, current)) {
+  // First check if current node is the target
+  if (isPhpParserASTNode(current) && isSameNode(target, current)) {
+    console.log('Found target node at namespace:', namespace);
     return namespace;
   }
 
+  // If current is not an object, we can't traverse deeper
+  if (!current || typeof current !== 'object') {
+    return undefined;
+  }
+
+  // Traverse all properties
   for (const [name, value] of Object.entries(current)) {
     if (isPhpParserASTNode(value)) {
+      // Direct AST node property
       const result = findNodeNameSpace(target, value, [...namespace, name]);
       if (result) {
         return result;
       }
     } else if (Array.isArray(value)) {
+      // Array of potential AST nodes
       for (let index = 0; index < value.length; index++) {
         const item = value[index];
         if (isPhpParserASTNode(item)) {
@@ -77,8 +107,16 @@ export function findNodeNameSpace(target: INode, current: any, namespace = ['roo
           }
         }
       }
+    } else if (value && typeof value === 'object') {
+      // Nested object that might contain AST nodes
+      const result = findNodeNameSpace(target, value, [...namespace, name]);
+      if (result) {
+        return result;
+      }
     }
   }
+  
+  return undefined;
 }
 
 export function isPhpParserASTNode(node: any): node is INode {
