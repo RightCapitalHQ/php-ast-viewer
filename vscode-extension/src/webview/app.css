@@ -280,13 +280,13 @@ body {
 
 /* Improve focus states */
 .theme-toggle-item:focus-visible {
-  outline: 2px solid rgb(var(--color-primary));
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.3);
 }
 
 .custom-tab-trigger:focus-visible {
-  outline: 2px solid rgb(var(--color-primary));
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.3);
 }
 
 /* Ant Design Component Overrides */
@@ -411,8 +411,7 @@ body {
 
 /* Focus states */
 *:focus {
-  outline: 2px solid rgb(var(--color-primary) / 0.5);
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* Selection styles */
