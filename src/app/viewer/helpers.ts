@@ -1,5 +1,5 @@
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 export function searchNodeWithMatchedPosition(
   nodes: INode[],
@@ -78,7 +78,7 @@ export function searchNodeWithMatchedPosition(
 }
 
 export function isSameNode(target: INode, current: INode) {
-  return _.isEqual(target.attributes, current.attributes);
+  return isEqual(target.attributes, current.attributes);
 }
 
 export function findNodeNameSpace(target: INode, current: any, namespace = ['root']): string[] | undefined {

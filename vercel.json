@@ -3,6 +3,9 @@
     "api/parse.php": {
       "runtime": "vercel-php@0.7.1",
       "excludeFiles": "{.next,*.cache,node_modules,public,app}/**"
+    },
+    "app/**/*.ts": {
+      "excludeFiles": "node_modules/{typescript,@rightcapital/php-parser,prettier}/**"
     }
   },
   "routes": [{ "src": "/parse", "dest": "/api/parse.php" }]

@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import TreeView from 'react-treeview';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
-import _ from 'lodash';
+import get from 'lodash/get';
 import './tree-viewer.css';
 import { Typography } from 'antd';
 
@@ -15,9 +15,9 @@ function forEachChild(node: INode) {
   const childrenNodes: INode[] = [];
   Object.values(node).forEach((value) => {
     if (Array.isArray(value)) {
-      const newNodes = value.filter((v) => _.get(v, 'nodeType') !== undefined);
+      const newNodes = value.filter((v) => get(v, 'nodeType') !== undefined);
       childrenNodes.push(...newNodes);
-    } else if (_.get(value, 'nodeType') !== undefined) {
+    } else if (get(value, 'nodeType') !== undefined) {
       childrenNodes.push(value);
     }
     return undefined;
@@ -43,7 +43,7 @@ export default function TreeViewer(props: TreeViewerProps) {
 
   return <div id='tree-viewer'>{renderNode(sourceFile, forEachChild)}</div>;
 
-  function renderNode(node: INode, getChildren: (node: INode) => INode[]): JSX.Element {
+  function renderNode(node: INode, getChildren: (node: INode) => INode[]): React.JSX.Element {
     const children = getChildren(node);
     const className = 'node-text' + (node === selectedNode ? ' selected' : '');
     const nodeTypeName = node.nodeType;

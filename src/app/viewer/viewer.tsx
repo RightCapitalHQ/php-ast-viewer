@@ -17,7 +17,8 @@ import {
 } from 'antd';
 import { Editor } from '@monaco-editor/react';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
-import _, { debounce, throttle } from 'lodash';
+import debounce from 'lodash/debounce';
+import throttle from 'lodash/throttle';
 import {
   findNodeNameSpace,
   prependCodeWithPhpStartTag,
@@ -110,8 +111,8 @@ function BaseViewer({ isDarkMode, setIsDarkMode }: BaseViewerProps) {
   const [isTourOpen, setIsTourOpen] = useState(false);
 
   const jsonDataRef = useRef(jsonData);
-  const editorRef = useRef<any>();
-  const deltaDecorationsRef = useRef<any>();
+  const editorRef = useRef<any>(null);
+  const deltaDecorationsRef = useRef<any>(null);
 
   const { token } = useToken();
 

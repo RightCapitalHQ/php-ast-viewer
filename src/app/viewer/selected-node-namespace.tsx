@@ -1,7 +1,7 @@
 import { Breadcrumb, Button, Dropdown, MenuProps, Typography } from 'antd';
 import { getNodeByNameSpace, isPhpParserASTNode as isPhpParserAstNode } from './helpers';
 import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
-import _ from 'lodash';
+import set from 'lodash/set';
 import { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -56,7 +56,7 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
           };
 
           if (subItems.length > 0) {
-            _.set(item, 'children', subItems);
+            set(item, 'children', subItems);
           }
 
           return item;
@@ -83,7 +83,7 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
           };
 
           if (subItems.length > 0) {
-            _.set(item, 'children', subItems);
+            set(item, 'children', subItems);
           }
 
           items.push(item);
@@ -96,7 +96,7 @@ export const SelectedNodeNamespace: React.FC<SelectedNodeInfoProps> = ({ jsonDat
               label: <Typography.Text className='p-[4px]'>{k}</Typography.Text>,
             };
 
-            _.set(item, 'children', subItems);
+            set(item, 'children', subItems);
 
             items.push(item);
           }
