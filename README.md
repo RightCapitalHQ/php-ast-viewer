@@ -22,14 +22,6 @@ or
 pnpm all-in-one # This command runs the above three commands.
 ```
 
-After the development server is running, use the following command to copy the `vendor` folder to `.next/server/`
-
-```bash
-pnpm copy-vendor
-```
-
-The purpose is to copy the php-parser dependency into the Next.js server folder.
-
 ## Demo video
 
 https://github.com/RightCapitalHQ/php-ast-viewer/assets/43896664/e6dd70c3-5e58-466d-808e-6eaac383d37f
