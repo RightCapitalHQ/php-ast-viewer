@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
+import { INode } from './types';
 import ReactJson, { CollapsedFieldProps, OnSelectProps } from '@yilun-sun/react-json-view';
 import './json-viewer.css';
 import { Spin } from 'antd';

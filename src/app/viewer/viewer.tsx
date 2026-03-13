@@ -16,7 +16,7 @@ import {
   Typography,
 } from 'antd';
 import { Editor } from '@monaco-editor/react';
-import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
+import { INode } from './types';
 import debounce from 'lodash/debounce';
 import throttle from 'lodash/throttle';
 import {

@@ -1,4 +1,4 @@
-import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
+import { INode } from './types';
 import isEqual from 'lodash/isEqual';
 
 export function searchNodeWithMatchedPosition(

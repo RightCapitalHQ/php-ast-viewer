@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "all-in-one": "composer install && pnpm install && pnpm dev",
-    "dev": "php -S localhost:8080 -t . & next dev",
-    "dev:next": "next dev",
-    "dev:php": "php -S localhost:8080 -t .",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -18,6 +15,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@monaco-editor/react": "^4.6.0",
+    "@rightcapital/php-parser": "2.0.1-feature-sync-upstream-2024.2494.1.0.0",
     "@types/lodash": "^4.17.0",
     "@yilun-sun/react-json-view": "^1.25.2",
     "antd": "^5.16.2",
