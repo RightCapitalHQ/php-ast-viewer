@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import TreeView from 'react-treeview';
-import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
+import { INode } from './types';
 import get from 'lodash/get';
 import './tree-viewer.css';
 import { Typography } from 'antd';

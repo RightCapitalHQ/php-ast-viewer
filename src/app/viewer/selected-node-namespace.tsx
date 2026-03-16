@@ -1,6 +1,6 @@
 import { Breadcrumb, Button, Dropdown, MenuProps, Typography } from 'antd';
 import { getNodeByNameSpace, isPhpParserASTNode as isPhpParserAstNode } from './helpers';
-import { INode } from '@rightcapital/php-parser/dist/php-parser/types/node';
+import { INode } from './types';
 import set from 'lodash/set';
 import { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
